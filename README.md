@@ -1,4 +1,4 @@
-# app_chat
+# App Chat
 
 A new Flutter project.
 
