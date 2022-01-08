@@ -1,6 +1,4 @@
-![Screenshot_1641617806](https://user-images.githubusercontent.com/95491504/148632448-1a468431-3242-4beb-b646-2c7295bec177.png)
-![Screenshot_1641617855](https://user-images.githubusercontent.com/95491504/148632450-c7032d6d-c613-43bd-97b8-379ef2e90d94.png)
-![Screenshot_1641617871](https://user-images.githubusercontent.com/95491504/148632454-db72ce08-6f67-47de-b294-37d4aa344787.png)
+![photo-collage](https://user-images.githubusercontent.com/95491504/148632561-ed1a1497-7625-4e1d-93c1-792f0f7fd7b8.png)
 
 
 
