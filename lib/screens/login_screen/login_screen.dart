@@ -78,7 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         validation.fillCheck([email, password]);
                         validation.emailValidation(email);
                         validation.passwordValidation(password);
-
                         vm.dispatch(
                             action: LogIn(email: email, password: password));
                       },
