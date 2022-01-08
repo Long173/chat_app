@@ -20,8 +20,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   var emailController = TextEditingController();
-
   var passwordController = TextEditingController();
+  var validation = Validation();
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () async {
                         var email = emailController.text.trim();
                         var password = passwordController.text.trim();
-                        fillCheck([email, password]);
-                        emailValidation(email);
-                        passwordValidation(password);
+                        validation.fillCheck([email, password]);
+                        validation.emailValidation(email);
+                        validation.passwordValidation(password);
 
                         vm.dispatch(
                             action: LogIn(email: email, password: password));

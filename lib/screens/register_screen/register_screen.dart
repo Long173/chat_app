@@ -11,12 +11,24 @@ import '../../const.dart';
 import '../../keys.dart';
 import '../../validation.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   static final _navigatorKey = NavKey.navKey;
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   var fullNameController = TextEditingController();
+
   var emailController = TextEditingController();
+
   var passwordController = TextEditingController();
+
   var confirmController = TextEditingController();
+
+  var validation = Validation();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +37,7 @@ class RegisterScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: kBackgroundColor,
         leading: BackButtonAppBar(
-          navigatorKey: _navigatorKey,
+          navigatorKey: RegisterScreen._navigatorKey,
         ),
       ),
       body: Container(
@@ -73,10 +85,11 @@ class RegisterScreen extends StatelessWidget {
                       var password = passwordController.text.trim();
                       var confirm = confirmController.text.trim();
 
-                      fillCheck([fullName, email, password, confirm]);
-                      emailValidation(email);
-                      passwordValidation(password);
-                      matchPassword(password, confirm);
+                      validation
+                          .fillCheck([fullName, email, password, confirm]);
+                      validation.emailValidation(email);
+                      validation.passwordValidation(password);
+                      validation.matchPassword(password, confirm);
                       viewModel.dispatch(
                         action: Register(
                           name: fullName,
