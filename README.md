@@ -4,7 +4,7 @@
 
 # About App
 
-A first flutter project.
+A first my flutter project.
 This App can chat to friend, send photos, create new Account...
 
 ## Screens:
