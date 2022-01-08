@@ -1,16 +1,18 @@
-# App Chat
+![Screenshot_1641617806](https://user-images.githubusercontent.com/95491504/148632108-a8cdacf7-017e-4b37-8033-3461f3245cad.png)
+![Screenshot_1641617855](https://user-images.githubusercontent.com/95491504/148632112-7fe60fef-a442-45e3-85a4-3986320fbfb1.png)
+![Screenshot_1641617871](https://user-images.githubusercontent.com/95491504/148632114-706ac33f-7db8-4103-a272-c33ad9d6efc5.png)
 
-A new Flutter project.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+# About App
 
-A few resources to get you started if this is your first Flutter project:
+A first flutter project.
+This App can chat to friend, send photos, create new Account...
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Screens:
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Login screen: you can login your account in this screen.
+* Register screen: you can register new account in this screen.
+* Home screen: Showing all friend, recent messages.
+* Chat screen: Showing all your message your friend you choose in Home screen.
+* User screen: Showing all your information, avatar, you can change your avatar.
