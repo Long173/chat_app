@@ -30,9 +30,23 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(
-            'Login',
-            style: kLoginText,
+          Column(
+            children: [
+              Text(
+                'Login',
+                style: kLoginText,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Hero(
+                tag: 'icon',
+                child: Image.asset(
+                  'assets/icon/logo.png',
+                  height: 150,
+                ),
+              ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),

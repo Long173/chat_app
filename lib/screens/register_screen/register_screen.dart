@@ -20,13 +20,9 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   var fullNameController = TextEditingController();
-
   var emailController = TextEditingController();
-
   var passwordController = TextEditingController();
-
   var confirmController = TextEditingController();
-
   var validation = Validation();
 
   @override
@@ -46,9 +42,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(
-                'Register',
-                style: kLoginText,
+              Column(
+                children: [
+                  Text(
+                    'Register',
+                    style: kLoginText,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Hero(
+                    tag: 'icon',
+                    child: Image.asset(
+                      'assets/icon/logo.png',
+                      height: 150,
+                    ),
+                  ),
+                ],
               ),
               Column(
                 children: [

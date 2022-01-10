@@ -37,6 +37,7 @@ class ChatApp extends StatelessWidget {
     return StoreProvider(
       store: store,
       child: MaterialApp(
+        title: 'App Chat',
         debugShowCheckedModeBanner: false,
         navigatorKey: NavKey.navKey,
         initialRoute: FirebaseAuth.instance.currentUser == null
