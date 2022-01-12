@@ -112,7 +112,7 @@ class Repository {
       map['type'] = type;
       map['timeSend'] = timeSend.toDate();
 
-      await firebase.collection('messages').doc(user!.email).set({
+      await firebase.collection('messages').doc(sender).set({
         'text': FieldValue.arrayUnion([map]),
       }, SetOptions(merge: true));
 
