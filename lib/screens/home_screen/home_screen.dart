@@ -27,7 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    repository.getListFriend().then((value) => _listFriend.addAll(value));
+    if (user != null) {
+      repository
+          .getListFriend(user!)
+          .then((value) => _listFriend.addAll(value));
+    }
     super.initState();
   }
 
@@ -87,7 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
               converter: (Store<AppState> store) =>
                   AppStateViewModel.create(store),
               onInitialBuild: (viewModel) {
-                viewModel.dispatch(action: GetAllRecentMess());
+                viewModel.dispatch(
+                    action: GetAllRecentMess.create(newUser: user!));
               },
               builder: (BuildContext context, vm) {
                 final recent = vm.recentMess;

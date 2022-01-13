@@ -15,15 +15,14 @@ import '../route.dart';
 class Repository {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  User? user = FirebaseAuth.instance.currentUser;
   final _navigatorKey = NavKey.navKey;
 
-  Future<List> getListFriend() async {
+  Future<List> getListFriend(User user) async {
     List list = [];
     final result = firebase.collection('messages');
     await result.get().then((snapshot) {
       snapshot.docs.forEach((doc) {
-        if (doc.id != user!.email) {
+        if (doc.id != user.email) {
           list.add(doc.id);
         }
       });
@@ -31,15 +30,15 @@ class Repository {
     return list;
   }
 
-  Future<List> getRecentFriend() async {
+  Future<List> getRecentFriend(User user) async {
     List setList = [];
     var messSnapshot =
-        await firebase.collection("messages").doc(user!.email).get();
+        await firebase.collection("messages").doc(user.email).get();
     if (messSnapshot.data()!['text'] != []) {
       for (var i in messSnapshot.data()!['text']) {
-        if (i['to'] != user!.email)
+        if (i['to'] != user.email)
           setList.add(i['to']);
-        else if (i['from'] != user!.email) setList.add(i['from']);
+        else if (i['from'] != user.email) setList.add(i['from']);
       }
     }
     setList = List.from(setList.reversed).toSet().toList();
@@ -53,7 +52,7 @@ class Repository {
     }
   }
 
-  Future<List<RecentMessage>> getRecentMess(List list) async {
+  Future<List<RecentMessage>> getRecentMess(User user,List list) async {
     List<RecentMessage> list1 = [];
     for (var i in list) {
       var messSnapshot =
@@ -61,19 +60,12 @@ class Repository {
       var textList = messSnapshot.data()!['text'];
       if (textList != []) {
         for (var j = textList.length - 1; j >= 0; j--) {
-          if ((textList[j]['from'] == user!.email ||
+          if ((textList[j]['from'] == user.email ||
                   textList[j]['from'] == i.toString()) &
-              (textList[j]['to'] == user!.email ||
+              (textList[j]['to'] == user.email ||
                   textList[j]['to'] == i.toString())) {
             var lastMess = textList[j]['body'];
             var typeMess = textList[j]['type'];
-            var senderMess;
-            if (textList[j]['from'] != user!.email) {
-              senderMess = textList[j]['from'];
-            } else {
-              senderMess = textList[j]['to'];
-            }
-
             var _timeSend = textList[j]['timeSend'].toDate();
             if (DateFormat.yMd().format((_timeSend)) ==
                 DateFormat.yMd().format(Timestamp.now().toDate())) {
@@ -87,7 +79,7 @@ class Repository {
               ..body = lastMess
               ..type = typeMess
               ..time = _timeSend
-              ..sender = senderMess
+              ..sender = i
               ..image = ava);
             list1.add(recentMess);
             break;

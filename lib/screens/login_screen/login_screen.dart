@@ -1,5 +1,6 @@
 import 'package:app_chat/route.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
+import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/selectors/app_state_view_model.dart';
 import 'package:app_chat/validation.dart';
@@ -94,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         validation.passwordValidation(password);
                         vm.dispatch(
                             action: LogIn(email: email, password: password));
+                    
                       },
                       child: LoginButton(),
                     );

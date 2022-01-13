@@ -37,9 +37,9 @@ class AppMiddleware implements EpicClass<AppState> {
       if (action is GetAllRecentMess) {
         try {
           yield StatusReducerAction.create(status: "isLoading");
-          List recentFriend = await repository.getRecentFriend();
+          List recentFriend = await repository.getRecentFriend(action.user);
           List<RecentMessage> recentMess =
-              await repository.getRecentMess(recentFriend);
+              await repository.getRecentMess(action.user, recentFriend);
           yield ChangeRecentMess.create(newMess: recentMess);
         } catch (e) {
           print(e);

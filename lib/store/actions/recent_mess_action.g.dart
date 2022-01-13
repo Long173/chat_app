@@ -8,13 +8,15 @@ part of 'recent_mess_action.dart';
 
 class _$GetAllRecentMess extends GetAllRecentMess {
   @override
-  final User? user;
+  final User user;
 
   factory _$GetAllRecentMess(
           [void Function(GetAllRecentMessBuilder)? updates]) =>
       (new GetAllRecentMessBuilder()..update(updates)).build();
 
-  _$GetAllRecentMess._({this.user}) : super._();
+  _$GetAllRecentMess._({required this.user}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(user, 'GetAllRecentMess', 'user');
+  }
 
   @override
   GetAllRecentMess rebuild(void Function(GetAllRecentMessBuilder) updates) =>
@@ -74,7 +76,10 @@ class GetAllRecentMessBuilder
 
   @override
   _$GetAllRecentMess build() {
-    final _$result = _$v ?? new _$GetAllRecentMess._(user: user);
+    final _$result = _$v ??
+        new _$GetAllRecentMess._(
+            user: BuiltValueNullFieldError.checkNotNull(
+                user, 'GetAllRecentMess', 'user'));
     replace(_$result);
     return _$result;
   }

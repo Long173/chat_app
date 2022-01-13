@@ -6,7 +6,9 @@ part 'recent_mess_action.g.dart';
 abstract class GetAllRecentMess
     implements Built<GetAllRecentMess, GetAllRecentMessBuilder> {
   GetAllRecentMess._();
-  User? get user;
+  User get user;
+  factory GetAllRecentMess.create({required User newUser}) =>
+      GetAllRecentMess((update) => update..user = newUser);
   factory GetAllRecentMess([void Function(GetAllRecentMessBuilder) updates]) =
       _$GetAllRecentMess;
 }

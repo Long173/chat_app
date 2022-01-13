@@ -1,6 +1,4 @@
 import 'package:built_value/built_value.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 part 'message.g.dart';
 
 abstract class AbstractRecentMessage {}
