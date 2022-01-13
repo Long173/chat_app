@@ -8,11 +8,12 @@ abstract class AbstractAppState {}
 abstract class AppState
     implements Built<AppState, AppStateBuilder>, AbstractAppState {
   String get status;
-  List<RecentMessage>? get recentMess;
+  List<RecentMessage> get recentMess;
   AppState._();
 
   static void _initializeBuilder(AppStateBuilder builder) {
     builder.status = "idle";
+    builder.recentMess = [];
   }
 
   factory AppState([void Function(AppStateBuilder)? updates]) = _$AppState;

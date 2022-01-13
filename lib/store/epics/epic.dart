@@ -1,9 +1,11 @@
 import 'package:app_chat/repo/repository.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/actions/message_action.dart';
+import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/actions/register_action.dart';
 import 'package:app_chat/store/actions/status_reducer_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
+import 'package:app_chat/store/models/message.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -22,10 +24,30 @@ class AppMiddleware implements EpicClass<AppState> {
   @override
   Stream call(Stream actions, EpicStore<AppState> store) {
     return combineEpics<AppState>([
+      getAllRecentMess,
       sendMessage,
       auth,
       register,
     ])(actions, store);
+  }
+
+  Stream<dynamic> getAllRecentMess(
+      Stream<dynamic> actions, EpicStore<AppState> store) async* {
+    await for (final action in actions) {
+      if (action is GetAllRecentMess) {
+        try {
+          yield StatusReducerAction.create(status: "isLoading");
+          List recentFriend = await repository.getRecentFriend();
+          List<RecentMessage> recentMess =
+              await repository.getRecentMess(recentFriend);
+          yield ChangeRecentMess.create(newMess: recentMess);
+        } catch (e) {
+          print(e);
+        } finally {
+          yield StatusReducerAction.create(status: "idle");
+        }
+      }
+    }
   }
 
   Stream<dynamic> sendMessage(

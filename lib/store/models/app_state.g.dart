@@ -10,13 +10,14 @@ class _$AppState extends AppState {
   @override
   final String status;
   @override
-  final List<RecentMessage>? recentMess;
+  final List<RecentMessage> recentMess;
 
   factory _$AppState([void Function(AppStateBuilder)? updates]) =>
       (new AppStateBuilder()..update(updates)).build();
 
-  _$AppState._({required this.status, this.recentMess}) : super._() {
+  _$AppState._({required this.status, required this.recentMess}) : super._() {
     BuiltValueNullFieldError.checkNotNull(status, 'AppState', 'status');
+    BuiltValueNullFieldError.checkNotNull(recentMess, 'AppState', 'recentMess');
   }
 
   @override
@@ -91,7 +92,8 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
         new _$AppState._(
             status: BuiltValueNullFieldError.checkNotNull(
                 status, 'AppState', 'status'),
-            recentMess: recentMess);
+            recentMess: BuiltValueNullFieldError.checkNotNull(
+                recentMess, 'AppState', 'recentMess'));
     replace(_$result);
     return _$result;
   }

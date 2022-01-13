@@ -1,7 +1,12 @@
 import 'package:app_chat/repo/repository.dart';
+import 'package:app_chat/store/actions/recent_mess_action.dart';
+import 'package:app_chat/store/models/app_state.dart';
+import 'package:app_chat/store/selectors/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import '../../const.dart';
 import '../../keys.dart';
 import '../../route.dart';
@@ -18,14 +23,12 @@ class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   Repository repository = Repository();
-  List _listRecentChat = [];
   List _listFriend = [];
 
-  Future<List> futureWait() async {
-    return Future.wait([
-      repository.listFriend(user!).then((value) => _listFriend.addAll(value)),
-      repository.listDoc(user!).then((value) => _listRecentChat.addAll(value)),
-    ]);
+  @override
+  void initState() {
+    repository.getListFriend().then((value) => _listFriend.addAll(value));
+    super.initState();
   }
 
   @override
@@ -79,16 +82,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            body: FutureBuilder(
-              future: futureWait(),
-              builder: (context, snapshot) {
-                return Column(
-                  children: [
-                    FavoriteContacts(
-                      listFriend: _listFriend,
-                    ),
-                    RecentChats(list: _listRecentChat, user: user),
-                  ],
+            body: StoreConnector<AppState, AppStateViewModel>(
+              distinct: true,
+              converter: (Store<AppState> store) =>
+                  AppStateViewModel.create(store),
+              onInitialBuild: (viewModel) {
+                viewModel.dispatch(action: GetAllRecentMess());
+              },
+              builder: (BuildContext context, vm) {
+                final recent = vm.recentMess;
+                final status = vm.status;
+                return Container(
+                  child: status == 'idle'
+                      ? Column(
+                          children: [
+                            FavoriteContacts(
+                              listFriend: _listFriend,
+                            ),
+                            RecentChats(
+                                lenghtChat: recent!.length, recent: recent),
+                          ],
+                        )
+                      : Center(child: CircularProgressIndicator()),
                 );
               },
             ),

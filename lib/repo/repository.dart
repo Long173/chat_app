@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:app_chat/store/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -17,12 +18,12 @@ class Repository {
   User? user = FirebaseAuth.instance.currentUser;
   final _navigatorKey = NavKey.navKey;
 
-  Future<List> listFriend(User user) async {
+  Future<List> getListFriend() async {
     List list = [];
     final result = firebase.collection('messages');
     await result.get().then((snapshot) {
       snapshot.docs.forEach((doc) {
-        if (doc.id != user.email) {
+        if (doc.id != user!.email) {
           list.add(doc.id);
         }
       });
@@ -30,19 +31,71 @@ class Repository {
     return list;
   }
 
-  Future<List> listDoc(User user) async {
+  Future<List> getRecentFriend() async {
     List setList = [];
     var messSnapshot =
-        await firebase.collection("messages").doc(user.email).get();
+        await firebase.collection("messages").doc(user!.email).get();
     if (messSnapshot.data()!['text'] != []) {
       for (var i in messSnapshot.data()!['text']) {
-        if (i['to'] != user.email)
+        if (i['to'] != user!.email)
           setList.add(i['to']);
-        else if (i['from'] != user.email) setList.add(i['from']);
+        else if (i['from'] != user!.email) setList.add(i['from']);
       }
     }
     setList = List.from(setList.reversed).toSet().toList();
     return setList;
+  }
+
+  Future getAvatar(var name) async {
+    var snapshot = await firebase.collection("users").doc(name).get();
+    if (snapshot.data() != null) {
+      return snapshot.data()!['image'];
+    }
+  }
+
+  Future<List<RecentMessage>> getRecentMess(List list) async {
+    List<RecentMessage> list1 = [];
+    for (var i in list) {
+      var messSnapshot =
+          await firebase.collection("messages").doc(i.toString()).get();
+      var textList = messSnapshot.data()!['text'];
+      if (textList != []) {
+        for (var j = textList.length - 1; j >= 0; j--) {
+          if ((textList[j]['from'] == user!.email ||
+                  textList[j]['from'] == i.toString()) &
+              (textList[j]['to'] == user!.email ||
+                  textList[j]['to'] == i.toString())) {
+            var lastMess = textList[j]['body'];
+            var typeMess = textList[j]['type'];
+            var senderMess;
+            if (textList[j]['from'] != user!.email) {
+              senderMess = textList[j]['from'];
+            } else {
+              senderMess = textList[j]['to'];
+            }
+
+            var _timeSend = textList[j]['timeSend'].toDate();
+            if (DateFormat.yMd().format((_timeSend)) ==
+                DateFormat.yMd().format(Timestamp.now().toDate())) {
+              _timeSend = DateFormat.Hm().format(_timeSend).toString();
+            } else {
+              _timeSend = DateFormat.yMd().format(_timeSend).toString();
+            }
+            var ava;
+            await getAvatar(i.toString()).then((value) => ava = value);
+            var recentMess = new RecentMessage((b) => b
+              ..body = lastMess
+              ..type = typeMess
+              ..time = _timeSend
+              ..sender = senderMess
+              ..image = ava);
+            list1.add(recentMess);
+            break;
+          }
+        }
+      }
+    }
+    return list1;
   }
 
   Future<File?> getImage() async {

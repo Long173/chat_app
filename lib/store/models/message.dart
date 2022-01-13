@@ -11,7 +11,8 @@ abstract class RecentMessage
         AbstractRecentMessage {
   String get sender;
   String get body;
-  Timestamp get time;
+  String get type;
+  String get time;
   String get image;
   RecentMessage._();
 

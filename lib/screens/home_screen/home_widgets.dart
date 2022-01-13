@@ -1,6 +1,7 @@
 import 'package:app_chat/screens/chat_screen/chat_screen.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
+import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/selectors/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -132,20 +133,23 @@ class _BuildHomePageState extends State<BuildHomePage> {
   Future getLastMess() async {
     var messSnapshot =
         await firebase.collection("messages").doc(widget.friendName).get();
-    if (messSnapshot.data()!['text'] != []) {
-      for (var i in messSnapshot.data()!['text']) {
-        if ((i['from'] == widget.currentUser ||
-                i['from'] == widget.friendName) &
-            (i['to'] == widget.currentUser || i['to'] == widget.friendName)) {
-          lastMess = i['body'];
-          typeMess = i['type'];
-          var _timeSend = i['timeSend'].toDate();
+    var textList = messSnapshot.data()!['text'];
+    if (textList != []) {
+      for (var i = textList.length - 1; i >= 0; i--) {
+        if ((textList[i]['from'] == widget.currentUser ||
+                textList[i]['from'] == widget.friendName) &
+            (textList[i]['to'] == widget.currentUser ||
+                textList[i]['to'] == widget.friendName)) {
+          lastMess = textList[i]['body'];
+          typeMess = textList[i]['type'];
+          var _timeSend = textList[i]['timeSend'].toDate();
           if (DateFormat.yMd().format((_timeSend)) ==
               DateFormat.yMd().format(Timestamp.now().toDate())) {
             timeSend = DateFormat.Hm().format(_timeSend).toString();
           } else {
             timeSend = DateFormat.yMd().format(_timeSend).toString();
           }
+          break;
         }
       }
     }
@@ -296,13 +300,12 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
 class RecentChats extends StatelessWidget {
   const RecentChats({
     Key? key,
-    required List list,
-    required this.user,
-  })  : _list = list,
-        super(key: key);
+    required this.lenghtChat,
+    required this.recent,
+  }) : super(key: key);
 
-  final List _list;
-  final User? user;
+  final int lenghtChat;
+  final List<RecentMessage>? recent;
 
   @override
   Widget build(BuildContext context) {
@@ -321,14 +324,28 @@ class RecentChats extends StatelessWidget {
             topRight: Radius.circular(30.0),
           ),
           child: ListView.builder(
-            itemCount: _list.length,
-            itemBuilder: (BuildContext context, int index) {
-              return BuildHomePage(
-                friendName: _list[index],
-                currentUser: user!.email,
-              );
-            },
-          ),
+              itemCount: lenghtChat,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChatScreen(
+                                  friendName: recent![index].sender)));
+                    },
+                    child: MessageCard(
+                        avt: recent![index].image,
+                        type: recent![index].type,
+                        sender: recent![index].sender,
+                        lastMessage: recent![index].body,
+                        timeSend: recent![index].time),
+                  ),
+                );
+              }),
         ),
       ),
     );

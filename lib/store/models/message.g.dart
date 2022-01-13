@@ -12,7 +12,9 @@ class _$RecentMessage extends RecentMessage {
   @override
   final String body;
   @override
-  final Timestamp time;
+  final String type;
+  @override
+  final String time;
   @override
   final String image;
 
@@ -22,11 +24,13 @@ class _$RecentMessage extends RecentMessage {
   _$RecentMessage._(
       {required this.sender,
       required this.body,
+      required this.type,
       required this.time,
       required this.image})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(sender, 'RecentMessage', 'sender');
     BuiltValueNullFieldError.checkNotNull(body, 'RecentMessage', 'body');
+    BuiltValueNullFieldError.checkNotNull(type, 'RecentMessage', 'type');
     BuiltValueNullFieldError.checkNotNull(time, 'RecentMessage', 'time');
     BuiltValueNullFieldError.checkNotNull(image, 'RecentMessage', 'image');
   }
@@ -44,6 +48,7 @@ class _$RecentMessage extends RecentMessage {
     return other is RecentMessage &&
         sender == other.sender &&
         body == other.body &&
+        type == other.type &&
         time == other.time &&
         image == other.image;
   }
@@ -51,7 +56,8 @@ class _$RecentMessage extends RecentMessage {
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, sender.hashCode), body.hashCode), time.hashCode),
+        $jc($jc($jc($jc(0, sender.hashCode), body.hashCode), type.hashCode),
+            time.hashCode),
         image.hashCode));
   }
 
@@ -60,6 +66,7 @@ class _$RecentMessage extends RecentMessage {
     return (newBuiltValueToStringHelper('RecentMessage')
           ..add('sender', sender)
           ..add('body', body)
+          ..add('type', type)
           ..add('time', time)
           ..add('image', image))
         .toString();
@@ -78,9 +85,13 @@ class RecentMessageBuilder
   String? get body => _$this._body;
   set body(String? body) => _$this._body = body;
 
-  Timestamp? _time;
-  Timestamp? get time => _$this._time;
-  set time(Timestamp? time) => _$this._time = time;
+  String? _type;
+  String? get type => _$this._type;
+  set type(String? type) => _$this._type = type;
+
+  String? _time;
+  String? get time => _$this._time;
+  set time(String? time) => _$this._time = time;
 
   String? _image;
   String? get image => _$this._image;
@@ -93,6 +104,7 @@ class RecentMessageBuilder
     if ($v != null) {
       _sender = $v.sender;
       _body = $v.body;
+      _type = $v.type;
       _time = $v.time;
       _image = $v.image;
       _$v = null;
@@ -119,6 +131,8 @@ class RecentMessageBuilder
                 sender, 'RecentMessage', 'sender'),
             body: BuiltValueNullFieldError.checkNotNull(
                 body, 'RecentMessage', 'body'),
+            type: BuiltValueNullFieldError.checkNotNull(
+                type, 'RecentMessage', 'type'),
             time: BuiltValueNullFieldError.checkNotNull(
                 time, 'RecentMessage', 'time'),
             image: BuiltValueNullFieldError.checkNotNull(
