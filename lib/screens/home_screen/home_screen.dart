@@ -27,11 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    if (user != null) {
-      repository
-          .getListFriend(user!)
-          .then((value) => _listFriend.addAll(value));
-    }
     super.initState();
   }
 
@@ -86,31 +81,42 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            body: StoreConnector<AppState, AppStateViewModel>(
-              distinct: true,
-              converter: (Store<AppState> store) =>
-                  AppStateViewModel.create(store),
-              onInitialBuild: (viewModel) {
-                viewModel.dispatch(
-                    action: GetAllRecentMess.create(newUser: user!));
-              },
-              builder: (BuildContext context, vm) {
-                final recent = vm.recentMess;
-                final status = vm.status;
-                return Container(
-                  child: status == 'idle'
-                      ? Column(
-                          children: [
-                            FavoriteContacts(
-                              listFriend: _listFriend,
+            body: Column(
+              children: [
+                FutureBuilder(
+                  future: repository
+                      .getListFriend(user!)
+                      .then((value) => _listFriend.addAll(value)),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    return FavoriteContacts(
+                      listFriend: _listFriend,
+                    );
+                  },
+                ),
+                StoreConnector<AppState, AppStateViewModel>(
+                  distinct: true,
+                  converter: (Store<AppState> store) =>
+                      AppStateViewModel.create(store),
+                  onInitialBuild: (viewModel) {
+                    viewModel.dispatch(
+                        action: GetAllRecentMess.create(newUser: user!));
+                  },
+                  builder: (BuildContext context, vm) {
+                    final recent = vm.recentMess;
+                    final status = vm.status;
+                    return Container(
+                      child: status == 'idle'
+                          ? RecentChats(
+                              lenghtChat: recent!.length, recent: recent)
+                          : Expanded(
+                              flex: 4,
+                              child: LoadingRecentChat(),
                             ),
-                            RecentChats(
-                                lenghtChat: recent!.length, recent: recent),
-                          ],
-                        )
-                      : Center(child: CircularProgressIndicator()),
-                );
-              },
+                    );
+                  },
+                ),
+              ],
             ),
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: _index,

@@ -350,3 +350,93 @@ class RecentChats extends StatelessWidget {
     );
   }
 }
+
+class Skelton extends StatelessWidget {
+  const Skelton({
+    Key? key,
+    this.height,
+    this.width,
+  }) : super(key: key);
+
+  final double? height, width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.04),
+          borderRadius: BorderRadius.all(Radius.circular(16))),
+    );
+  }
+}
+
+class NewCardSkelton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var widthDevice = MediaQuery.of(context).size.width;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.black.withOpacity(0.04),
+          ),
+          Column(
+            children: [
+              Skelton(
+                width: widthDevice * 0.7,
+                height: 15,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Skelton(
+                width: widthDevice * 0.7,
+                height: 15,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class LoadingRecentChat extends StatelessWidget {
+  const LoadingRecentChat({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.0),
+          topRight: Radius.circular(30.0),
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.0),
+          topRight: Radius.circular(30.0),
+        ),
+        child: ListView.separated(
+            itemBuilder: (context, index) =>
+                NewCardSkelton(),
+            separatorBuilder: (context, index) =>
+                SizedBox(
+                  height: 10,
+                ),
+            itemCount: 7),
+      ),
+    );
+  }
+}
