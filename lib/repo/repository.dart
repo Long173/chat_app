@@ -9,13 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import '../keys.dart';
-import '../route.dart';
 
 class Repository {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  final _navigatorKey = NavKey.navKey;
 
   Future<List> getListFriend(User user) async {
     List list = [];
@@ -52,7 +49,7 @@ class Repository {
     }
   }
 
-  Future<List<RecentMessage>> getRecentMess(User user,List list) async {
+  Future<List<RecentMessage>> getRecentMess(User user, List list) async {
     List<RecentMessage> list1 = [];
     for (var i in list) {
       var messSnapshot =
@@ -118,33 +115,6 @@ class Repository {
     var url = await firebaseRef.getDownloadURL();
     await firebase.collection('users').doc(user.email).update({'image': url});
     Fluttertoast.showToast(msg: 'Profile picture uploaded');
-  }
-
-  Future createNewAccount(String name, String email, String password) async {
-    UserCredential user = await auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    if (user.user != null) {
-      await firebase.collection('users').doc(user.user!.email).set({
-        'name': name,
-        'email': email,
-        'dateCreate': DateFormat.yMd().add_jm().format(DateTime.now()),
-        'image':
-            'https://firebasestorage.googleapis.com/v0/b/app-chat-c5b54.appspot.com/o/profileImage%2Fperson.png?alt=media&token=9eb5df06-22c4-4c02-a8fb-39cb1ed08e33',
-      });
-      await firebase.collection('messages').doc(user.user!.email).set({
-        'text': [],
-      }, SetOptions(merge: true));
-    }
-    _navigatorKey.currentState!.pop();
-    Fluttertoast.showToast(msg: 'Sign Up Success');
-  }
-
-  Future loginAccount(String email, String password) async {
-    UserCredential user =
-        await auth.signInWithEmailAndPassword(email: email, password: password);
-    if (user.user != null) {
-      _navigatorKey.currentState!.pushReplacementNamed(Routes.home);
-    }
   }
 
   Future sendMess(String message, String sender, String receiver, String type,

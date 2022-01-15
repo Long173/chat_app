@@ -105,6 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           name: fullName,
                           email: email,
                           password: password,
+                          context: context,
                         ),
                       );
                     },

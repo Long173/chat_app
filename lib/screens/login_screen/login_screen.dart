@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         validation.emailValidation(email);
                         validation.passwordValidation(password);
                         vm.dispatch(
-                            action: LogIn(email: email, password: password));
+                            action: LogIn(email: email, password: password, context: context));
                     
                       },
                       child: LoginButton(),
