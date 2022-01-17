@@ -1,5 +1,4 @@
 import 'package:built_value/built_value.dart';
-import 'action.dart';
 
 part 'status_reducer_action.g.dart';
 
@@ -8,8 +7,7 @@ abstract class AbstractStatusReducerAction {}
 abstract class StatusReducerAction
     implements
         Built<StatusReducerAction, StatusReducerActionBuilder>,
-        AbstractStatusReducerAction,
-        AppAction {
+        AbstractStatusReducerAction{
   String get newStatus;
   StatusReducerAction._();
 

@@ -1,3 +1,5 @@
+import 'package:app_chat/store/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class LogIn {
@@ -9,6 +11,17 @@ class LogIn {
     required this.password,
     required this.context,
   });
+}
+
+class VerifyUser {
+  final User user;
+  VerifyUser({required this.user});
+}
+
+class Authenticated {
+  final AppUser user;
+
+  const Authenticated({required this.user});
 }
 
 class LogOutAction {

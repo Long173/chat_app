@@ -83,6 +83,10 @@ class AppMiddleware implements EpicClass<AppState> {
     EpicStore<AppState> store,
   ) async* {
     await for (final action in actions) {
+      if (action is VerifyUser) {
+        var appUser = await repository.infoUser(action.user);
+        yield Authenticated(user: appUser);
+      }
       if (action is LogIn) {
         ProgressDialog progressDialog = ProgressDialog(action.context,
             message: Text('Please wait'), title: Text('Logging In'));
@@ -94,6 +98,8 @@ class AppMiddleware implements EpicClass<AppState> {
           if (user.user != null) {
             progressDialog.dismiss();
             _navigatorKey.currentState!.pushReplacementNamed(Routes.home);
+            var appUser = await repository.infoUser(user.user!);
+            yield Authenticated(user: appUser);
           }
         } on FirebaseAuthException catch (e) {
           progressDialog.dismiss();

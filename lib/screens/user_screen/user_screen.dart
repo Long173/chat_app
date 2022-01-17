@@ -1,9 +1,13 @@
 import 'dart:io';
 import 'package:app_chat/repo/repository.dart';
+import 'package:app_chat/store/models/app_state.dart';
+import 'package:app_chat/store/selectors/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import '../../const.dart';
 import '../../route.dart';
 
@@ -38,80 +42,63 @@ class _UserScreenState extends State<UserScreen> {
           },
         ),
       ),
-      body: SafeArea(
-        child: FutureBuilder<DocumentSnapshot>(
-          future: users.doc(user!.email).get(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return Text("Something went wrong");
-            }
-
-            if (snapshot.hasData && !snapshot.data!.exists) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.connectionState == ConnectionState.done) {
-              Map<String, dynamic> data =
-                  snapshot.data!.data() as Map<String, dynamic>;
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        _image = await repository.getImage();
-                        setState(() {});
-                      },
-                      child: CircleAvatar(
-                        radius: 100,
-                        child: ClipOval(
-                          child: SizedBox(
-                            width: 180,
-                            height: 180,
-                            child: (_image != null)
-                                ? Image.file(
-                                    _image!,
-                                    fit: BoxFit.fill,
-                                  )
-                                : Image.network('${data['image']}'),
-                          ),
+      body: StoreConnector<AppState, AppStateViewModel>(
+          converter: (Store<AppState> store) => AppStateViewModel.create(store),
+          builder: (BuildContext context, vm) {
+            var user = vm.user;
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      _image = await repository.getImage();
+                      setState(() {});
+                    },
+                    child: CircleAvatar(
+                      radius: 100,
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 180,
+                          height: 180,
+                          child: (_image != null)
+                              ? Image.file(
+                                  _image!,
+                                  fit: BoxFit.fill,
+                                )
+                              : Image.network('${user!.image}'),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 32,
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  Text(
+                    user!.name,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+                  ),
+                  Text(
+                    'Email: ${user.email}',
+                    style: kUserText,
+                  ),
+                  Text(
+                    'Date Create: ${user.dateCreate}',
+                    style: kUserText,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      repository.uploadUserAva(_image, user);
+                    },
+                    child: Text(
+                      'Save',
+                      style: TextStyle(fontSize: 24),
                     ),
-                    Text(
-                      data['name'],
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
-                    ),
-                    Text(
-                      'Email: ${data['email']}',
-                      style: kUserText,
-                    ),
-                    Text(
-                      'Date Create: ${data['dateCreate']}',
-                      style: kUserText,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        repository.uploadUserAva(_image, user!);
-                      },
-                      child: Text(
-                        'Save',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return Center(child: CircularProgressIndicator());
-          },
-        ),
-      ),
+                  ),
+                ],
+              ),
+            );
+          }),
     );
   }
 }

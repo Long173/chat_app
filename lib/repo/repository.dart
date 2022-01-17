@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:app_chat/store/models/message.dart';
+import 'package:app_chat/store/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -13,6 +14,18 @@ import 'package:intl/intl.dart';
 class Repository {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future<AppUser> infoUser(User user) async {
+    final result = await firebase.collection('users').doc(user.email).get();
+    final data = result.data();
+    var appUser = new AppUser((b) => b
+      ..dateCreate = data!['dateCreate']
+      ..email = data['email']
+      ..image = data['image']
+      ..name = data['name']);
+
+    return appUser;
+  }
 
   Future<List> getListFriend(User user) async {
     List list = [];
@@ -108,13 +121,18 @@ class Repository {
     return url;
   }
 
-  Future uploadUserAva(image, User user) async {
+  Future uploadUserAva(image, AppUser user) async {
     Reference firebaseRef =
-        FirebaseStorage.instance.ref('profileImage').child(user.email!);
+        FirebaseStorage.instance.ref('profileImage').child(user.email);
     await firebaseRef.putFile(image!);
     var url = await firebaseRef.getDownloadURL();
     await firebase.collection('users').doc(user.email).update({'image': url});
     Fluttertoast.showToast(msg: 'Profile picture uploaded');
+    AppUser.update(
+        newImage: url,
+        newName: user.name,
+        newDateCreate: user.dateCreate,
+        newEmail: user.email);
   }
 
   Future sendMess(String message, String sender, String receiver, String type,

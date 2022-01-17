@@ -1,4 +1,5 @@
 import 'package:app_chat/repo/repository.dart';
+import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/selectors/app_state_view_model.dart';
@@ -105,6 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (BuildContext context, vm) {
                     final recent = vm.recentMess;
                     final status = vm.status;
+                    if (vm.user == null) {
+                      vm.dispatch(action: VerifyUser(user: user!));
+                    }
                     return Container(
                       child: status == 'idle'
                           ? RecentChats(

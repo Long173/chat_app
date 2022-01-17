@@ -5,6 +5,7 @@ import 'package:app_chat/screens/home_screen/home_screen.dart';
 import 'package:app_chat/screens/login_screen/login_screen.dart';
 import 'package:app_chat/screens/register_screen/register_screen.dart';
 import 'package:app_chat/screens/user_screen/user_screen.dart';
+import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/epics/epic.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/reducers/app_state_reducer.dart';
@@ -32,6 +33,7 @@ Future<void> main() async {
 class ChatApp extends StatelessWidget {
   const ChatApp({Key? key, required this.store}) : super(key: key);
   final Store<AppState> store;
+
   @override
   Widget build(BuildContext context) {
     return StoreProvider(
