@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:app_chat/repo/repository.dart';
+import 'package:app_chat/store/actions/change_user_image.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/selectors/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -86,15 +87,22 @@ class _UserScreenState extends State<UserScreen> {
                     'Date Create: ${user.dateCreate}',
                     style: kUserText,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      repository.uploadUserAva(_image, user);
-                    },
-                    child: Text(
-                      'Save',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  ),
+                  StoreConnector<AppState, AppStateViewModel>(
+                      converter: (Store<AppState> store) =>
+                          AppStateViewModel.create(store),
+                      builder: (BuildContext context, vm) {
+                        return TextButton(
+                          onPressed: () async {
+                            var url =
+                                await repository.uploadUserAva(_image, user);
+                            vm.dispatch(action: UpdateUserInfo(image: url));
+                          },
+                          child: Text(
+                            'Save',
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        );
+                      }),
                 ],
               ),
             );

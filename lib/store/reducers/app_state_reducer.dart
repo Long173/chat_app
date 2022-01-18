@@ -1,4 +1,5 @@
 import 'package:app_chat/store/actions/auth_action.dart';
+import 'package:app_chat/store/actions/change_user_image.dart';
 import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/actions/status_reducer_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
@@ -8,7 +9,7 @@ final Reducer<AppState> appStateReducer = combineReducers<AppState>([
   TypedReducer<AppState, StatusReducerAction>(reducerChangeStatus),
   TypedReducer<AppState, ChangeRecentMess>(reducerChangeRecentMess),
   TypedReducer<AppState, Authenticated>(reducerReducerLogin),
-
+  TypedReducer<AppState, UpdateUserInfo>(updateUserInfo),
 ]);
 
 AppState reducerChangeStatus(AppState state, StatusReducerAction action) {
@@ -21,4 +22,8 @@ AppState reducerChangeRecentMess(AppState state, ChangeRecentMess action) {
 
 AppState reducerReducerLogin(AppState state, Authenticated action) {
   return state.rebuild((a) => a..user = action.user.toBuilder());
+}
+
+AppState updateUserInfo(AppState state, UpdateUserInfo action) {
+  return state.rebuild((a) => a..user.image = action.image);
 }

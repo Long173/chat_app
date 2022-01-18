@@ -128,11 +128,7 @@ class Repository {
     var url = await firebaseRef.getDownloadURL();
     await firebase.collection('users').doc(user.email).update({'image': url});
     Fluttertoast.showToast(msg: 'Profile picture uploaded');
-    AppUser.update(
-        newImage: url,
-        newName: user.name,
-        newDateCreate: user.dateCreate,
-        newEmail: user.email);
+    return url;
   }
 
   Future sendMess(String message, String sender, String receiver, String type,
