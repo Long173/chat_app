@@ -8,6 +8,7 @@ class SendMessage {
   final String receiver;
   final String type;
   final Timestamp timeSend;
+  final bool seen;
 
   const SendMessage({
     required this.message,
@@ -16,6 +17,7 @@ class SendMessage {
     required this.receiver,
     required this.type,
     required this.timeSend,
+    this.seen = true,
   });
 }
 

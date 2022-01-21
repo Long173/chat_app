@@ -17,6 +17,10 @@ class _$RecentMessage extends RecentMessage {
   final String time;
   @override
   final String image;
+  @override
+  final bool seen;
+  @override
+  final Timestamp realTime;
 
   factory _$RecentMessage([void Function(RecentMessageBuilder)? updates]) =>
       (new RecentMessageBuilder()..update(updates)).build();
@@ -26,13 +30,18 @@ class _$RecentMessage extends RecentMessage {
       required this.body,
       required this.type,
       required this.time,
-      required this.image})
+      required this.image,
+      required this.seen,
+      required this.realTime})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(sender, 'RecentMessage', 'sender');
     BuiltValueNullFieldError.checkNotNull(body, 'RecentMessage', 'body');
     BuiltValueNullFieldError.checkNotNull(type, 'RecentMessage', 'type');
     BuiltValueNullFieldError.checkNotNull(time, 'RecentMessage', 'time');
     BuiltValueNullFieldError.checkNotNull(image, 'RecentMessage', 'image');
+    BuiltValueNullFieldError.checkNotNull(seen, 'RecentMessage', 'seen');
+    BuiltValueNullFieldError.checkNotNull(
+        realTime, 'RecentMessage', 'realTime');
   }
 
   @override
@@ -50,15 +59,23 @@ class _$RecentMessage extends RecentMessage {
         body == other.body &&
         type == other.type &&
         time == other.time &&
-        image == other.image;
+        image == other.image &&
+        seen == other.seen &&
+        realTime == other.realTime;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc($jc(0, sender.hashCode), body.hashCode), type.hashCode),
-            time.hashCode),
-        image.hashCode));
+        $jc(
+            $jc(
+                $jc(
+                    $jc($jc($jc(0, sender.hashCode), body.hashCode),
+                        type.hashCode),
+                    time.hashCode),
+                image.hashCode),
+            seen.hashCode),
+        realTime.hashCode));
   }
 
   @override
@@ -68,7 +85,9 @@ class _$RecentMessage extends RecentMessage {
           ..add('body', body)
           ..add('type', type)
           ..add('time', time)
-          ..add('image', image))
+          ..add('image', image)
+          ..add('seen', seen)
+          ..add('realTime', realTime))
         .toString();
   }
 }
@@ -97,6 +116,14 @@ class RecentMessageBuilder
   String? get image => _$this._image;
   set image(String? image) => _$this._image = image;
 
+  bool? _seen;
+  bool? get seen => _$this._seen;
+  set seen(bool? seen) => _$this._seen = seen;
+
+  Timestamp? _realTime;
+  Timestamp? get realTime => _$this._realTime;
+  set realTime(Timestamp? realTime) => _$this._realTime = realTime;
+
   RecentMessageBuilder();
 
   RecentMessageBuilder get _$this {
@@ -107,6 +134,8 @@ class RecentMessageBuilder
       _type = $v.type;
       _time = $v.time;
       _image = $v.image;
+      _seen = $v.seen;
+      _realTime = $v.realTime;
       _$v = null;
     }
     return this;
@@ -136,7 +165,11 @@ class RecentMessageBuilder
             time: BuiltValueNullFieldError.checkNotNull(
                 time, 'RecentMessage', 'time'),
             image: BuiltValueNullFieldError.checkNotNull(
-                image, 'RecentMessage', 'image'));
+                image, 'RecentMessage', 'image'),
+            seen: BuiltValueNullFieldError.checkNotNull(
+                seen, 'RecentMessage', 'seen'),
+            realTime: BuiltValueNullFieldError.checkNotNull(
+                realTime, 'RecentMessage', 'realTime'));
     replace(_$result);
     return _$result;
   }

@@ -40,18 +40,41 @@ class Repository {
     return list;
   }
 
-  Future<List> getRecentFriend(User user) async {
-    List setList = [];
+  Future<List<RecentMessage>> getRecentFriend(User user) async {
+    List<RecentMessage> setList = [];
     var messSnapshot =
         await firebase.collection("messages").doc(user.email).get();
-    if (messSnapshot.data()!['text'] != []) {
-      for (var i in messSnapshot.data()!['text']) {
-        if (i['to'] != user.email)
-          setList.add(i['to']);
-        else if (i['from'] != user.email) setList.add(i['from']);
+
+    for (var i in messSnapshot.data()!.keys) {
+      var textList = messSnapshot.data()![i];
+      if (textList.length != 0) {
+        var lastMess = textList.last['body'];
+        var typeMess = textList.last['type'];
+        var seen = textList.last['seen'];
+        var _timeSend = textList.last['timeSend'].toDate();
+        if (DateFormat.yMd().format((_timeSend)) ==
+            DateFormat.yMd().format(Timestamp.now().toDate())) {
+          _timeSend = DateFormat.Hm().format(_timeSend).toString();
+        } else {
+          _timeSend = DateFormat.yMd().format(_timeSend).toString();
+        }
+        var ava;
+        await getAvatar(i.replaceAll('_', '.').toString())
+            .then((value) => ava = value);
+        var recentMess = new RecentMessage((b) => b
+          ..body = lastMess
+          ..type = typeMess
+          ..time = _timeSend
+          ..sender = i.replaceAll('_', '.')
+          ..image = ava
+          ..seen = seen
+          ..realTime = textList.last['timeSend']);
+        setList.add(recentMess);
       }
     }
-    setList = List.from(setList.reversed).toSet().toList();
+    setList.sort((a, b) {
+      return b.time.compareTo(a.time);
+    });
     return setList;
   }
 
@@ -60,44 +83,6 @@ class Repository {
     if (snapshot.data() != null) {
       return snapshot.data()!['image'];
     }
-  }
-
-  Future<List<RecentMessage>> getRecentMess(User user, List list) async {
-    List<RecentMessage> list1 = [];
-    for (var i in list) {
-      var messSnapshot =
-          await firebase.collection("messages").doc(i.toString()).get();
-      var textList = messSnapshot.data()!['text'];
-      if (textList != []) {
-        for (var j = textList.length - 1; j >= 0; j--) {
-          if ((textList[j]['from'] == user.email ||
-                  textList[j]['from'] == i.toString()) &
-              (textList[j]['to'] == user.email ||
-                  textList[j]['to'] == i.toString())) {
-            var lastMess = textList[j]['body'];
-            var typeMess = textList[j]['type'];
-            var _timeSend = textList[j]['timeSend'].toDate();
-            if (DateFormat.yMd().format((_timeSend)) ==
-                DateFormat.yMd().format(Timestamp.now().toDate())) {
-              _timeSend = DateFormat.Hm().format(_timeSend).toString();
-            } else {
-              _timeSend = DateFormat.yMd().format(_timeSend).toString();
-            }
-            var ava;
-            await getAvatar(i.toString()).then((value) => ava = value);
-            var recentMess = new RecentMessage((b) => b
-              ..body = lastMess
-              ..type = typeMess
-              ..time = _timeSend
-              ..sender = i
-              ..image = ava);
-            list1.add(recentMess);
-            break;
-          }
-        }
-      }
-    }
-    return list1;
   }
 
   Future<File?> getImage() async {
@@ -132,7 +117,7 @@ class Repository {
   }
 
   Future sendMess(String message, String sender, String receiver, String type,
-      Timestamp timeSend, ScrollController scrollController) async {
+      Timestamp timeSend, ScrollController scrollController, bool seen) async {
     if (message.length > 0) {
       var map = new Map<String, dynamic>();
       map['body'] = message;
@@ -140,13 +125,18 @@ class Repository {
       map['to'] = receiver;
       map['type'] = type;
       map['timeSend'] = timeSend.toDate();
+      map['seen'] = seen;
 
+      var receiver2 = receiver.replaceAll('.', '_');
+      var sender2 = sender.replaceAll('.', '_');
       await firebase.collection('messages').doc(sender).set({
-        'text': FieldValue.arrayUnion([map]),
+        receiver2: FieldValue.arrayUnion([map]),
       }, SetOptions(merge: true));
 
+      map['seen'] = !seen;
+
       await firebase.collection('messages').doc(receiver).set({
-        'text': FieldValue.arrayUnion([map]),
+        sender2: FieldValue.arrayUnion([map]),
       }, SetOptions(merge: true));
 
       scrollController.animateTo(

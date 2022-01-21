@@ -104,14 +104,15 @@ class _ChatScreenState extends State<ChatScreen> {
                               }
                               viewModel.dispatch(
                                 action: SendMessage(
-                                    type: _image == null ? 'text' : 'picture',
-                                    receiver: widget.friendName!,
-                                    message: _image == null
-                                        ? messageController.text
-                                        : _url.toString(),
-                                    sender: user!.email!,
-                                    timeSend: Timestamp.now(),
-                                    scrollController: scrollController),
+                                  type: _image == null ? 'text' : 'picture',
+                                  receiver: widget.friendName!,
+                                  message: _image == null
+                                      ? messageController.text
+                                      : _url.toString(),
+                                  sender: user!.email!,
+                                  timeSend: Timestamp.now(),
+                                  scrollController: scrollController,
+                                ),
                               );
                               messageController.clear();
                               setState(() {

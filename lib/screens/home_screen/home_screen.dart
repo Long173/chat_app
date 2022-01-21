@@ -107,12 +107,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     final recent = vm.recentMess;
                     final status = vm.status;
                     if (vm.user == null) {
-                      vm.dispatch(action: VerifyUser(user: user!));
+                     vm.dispatch(action: VerifyUser(user: user!));
                     }
                     return Container(
                       child: status == 'idle'
                           ? RecentChats(
-                              lenghtChat: recent!.length, recent: recent)
+                              lenghtChat: recent!.length, recent: recent, user : user!)
                           : Expanded(
                               flex: 4,
                               child: LoadingRecentChat(),

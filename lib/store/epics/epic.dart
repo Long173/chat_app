@@ -43,10 +43,8 @@ class AppMiddleware implements EpicClass<AppState> {
       if (action is GetAllRecentMess) {
         try {
           yield StatusReducerAction.create(status: "isLoading");
-          List recentFriend = await repository.getRecentFriend(action.user);
-          List<RecentMessage> recentMess =
-              await repository.getRecentMess(action.user, recentFriend);
-          yield ChangeRecentMess.create(newMess: recentMess);
+          List<RecentMessage> recentFriend = await repository.getRecentFriend(action.user);
+          yield ChangeRecentMess.create(newMess: recentFriend);
         } catch (e) {
           print(e);
         } finally {
@@ -68,7 +66,8 @@ class AppMiddleware implements EpicClass<AppState> {
               action.receiver,
               action.type,
               action.timeSend,
-              action.scrollController);
+              action.scrollController,
+              action.seen);
         } catch (e) {
           Fluttertoast.showToast(msg: e.toString());
         } finally {

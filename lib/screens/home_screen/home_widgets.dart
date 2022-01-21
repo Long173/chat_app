@@ -4,6 +4,7 @@ import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/selectors/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
@@ -51,7 +52,8 @@ class MessageCard extends StatelessWidget {
       required this.type,
       required this.sender,
       required this.lastMessage,
-      required this.timeSend})
+      required this.timeSend,
+      required this.seen})
       : super(key: key);
 
   final String sender;
@@ -59,6 +61,7 @@ class MessageCard extends StatelessWidget {
   final String lastMessage;
   final String timeSend;
   final String type;
+  final bool seen;
 
   @override
   Widget build(BuildContext context) {
@@ -76,27 +79,39 @@ class MessageCard extends StatelessWidget {
               children: [
                 Text(
                   sender,
-                  style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: seen ? Colors.grey.shade700 : Colors.black,
+                      fontWeight: seen ? null : FontWeight.bold),
                 ),
                 Row(
                   children: [
                     type == 'picture'
-                        ? Text('[Hình ảnh]')
+                        ? Text(
+                            '[Hình ảnh]',
+                            style: TextStyle(
+                                fontWeight: seen ? null : FontWeight.bold),
+                          )
                         : Text(
                             lastMessage.length > 25
                                 ? lastMessage.substring(0, 20) + '...'
                                 : lastMessage,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                fontSize: 16, color: Colors.grey.shade600),
+                                fontSize: 16,
+                                color:
+                                    seen ? Colors.grey.shade600 : Colors.black,
+                                fontWeight: seen ? null : FontWeight.bold),
                           ),
                     SizedBox(
                       width: 10,
                     ),
                     Text(
                       '•$timeSend',
-                      style:
-                          TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: seen ? Colors.grey.shade600 : Colors.black,
+                          fontWeight: seen ? null : FontWeight.bold),
                     )
                   ],
                 ),
@@ -178,11 +193,13 @@ class _BuildHomePageState extends State<BuildHomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: GestureDetector(
               child: MessageCard(
-                  type: typeMess,
-                  avt: data['image'],
-                  sender: data['name'],
-                  lastMessage: lastMess,
-                  timeSend: timeSend),
+                type: typeMess,
+                avt: data['image'],
+                sender: data['name'],
+                lastMessage: lastMess,
+                timeSend: timeSend,
+                seen: data['seen'],
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -301,13 +318,16 @@ class RecentChats extends StatelessWidget {
     Key? key,
     required this.lenghtChat,
     required this.recent,
+    required this.user,
   }) : super(key: key);
 
   final int lenghtChat;
   final List<RecentMessage>? recent;
+  final User user;
 
   @override
   Widget build(BuildContext context) {
+    var _firestore = FirebaseFirestore.instance;
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -329,20 +349,47 @@ class RecentChats extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
+                      onTap: () async {
+                        if (recent![index].seen == false) {
+                          var data = {};
+                          data['body'] = recent![index].body;
+                          data['from'] = recent![index].sender;
+                          data['seen'] = recent![index].seen;
+                          data['timeSend'] = recent![index].realTime;
+                          data['to'] = user.email;
+                          data['type'] = recent![index].type;
+                          var sender =
+                              recent![index].sender.replaceAll('.', '_');
+                          await _firestore
+                              .collection("messages")
+                              .doc(user.email)
+                              .update({
+                            sender: FieldValue.arrayRemove([data]),
+                          });
+                          data['seen'] = !recent![index].seen;
+                          await _firestore
+                              .collection("messages")
+                              .doc(user.email)
+                              .set({
+                            sender: FieldValue.arrayUnion([data]),
+                          }, SetOptions(merge: true));
+                        }
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ChatScreen(
-                                  friendName: recent![index].sender)));
-                    },
-                    child: MessageCard(
+                            builder: (context) =>
+                                ChatScreen(friendName: recent![index].sender),
+                          ),
+                        );
+                      },
+                      child: MessageCard(
                         avt: recent![index].image,
                         type: recent![index].type,
                         sender: recent![index].sender,
                         lastMessage: recent![index].body,
-                        timeSend: recent![index].time),
-                  ),
+                        timeSend: recent![index].time,
+                        seen: recent![index].seen,
+                      )),
                 );
               }),
         ),
@@ -406,7 +453,6 @@ class NewCardSkelton extends StatelessWidget {
   }
 }
 
-
 class LoadingRecentChat extends StatelessWidget {
   const LoadingRecentChat({
     Key? key,
@@ -429,10 +475,8 @@ class LoadingRecentChat extends StatelessWidget {
           topRight: Radius.circular(30.0),
         ),
         child: ListView.separated(
-            itemBuilder: (context, index) =>
-                NewCardSkelton(),
-            separatorBuilder: (context, index) =>
-                SizedBox(
+            itemBuilder: (context, index) => NewCardSkelton(),
+            separatorBuilder: (context, index) => SizedBox(
                   height: 10,
                 ),
             itemCount: 7),

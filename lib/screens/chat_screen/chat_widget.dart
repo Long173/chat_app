@@ -15,7 +15,6 @@ class BuildChatScreen extends StatefulWidget {
   final String? friendName;
   final User? user;
   final ScrollController scrollController;
-
   @override
   State<BuildChatScreen> createState() => _BuildChatScreenState();
 }
@@ -26,75 +25,67 @@ class _BuildChatScreenState extends State<BuildChatScreen> {
   @override
   Widget build(BuildContext context) {
     var _firestore = FirebaseFirestore.instance;
-
+    String friend = widget.friendName!.replaceAll('.', '_');
     return Expanded(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('messages').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Center(child: CircularProgressIndicator());
-          final messages = snapshot.data!.docs;
-
-          for (final data in messages) {
-            if (data.id == widget.user!.email) {
-              var list = [];
-              int lenList = data['text'].length;
-              for (var i = lenList - 1;
-                  i >= ((lenList > currentMax) ? (lenList - currentMax) : 0);
-                  i--) {
-                if (data['text'] != []) {
-                  if (data['text'][i]['to'] == widget.friendName ||
-                      data['text'][i]['from'] == widget.friendName) {
-                    list.add(data['text'][i]);
-                  }
-                } else {
-                  break;
+      child: StreamBuilder(
+          stream: _firestore
+              .collection('messages')
+              .doc(widget.user!.email)
+              .snapshots(),
+          builder: (BuildContext context,
+              AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+            if (snapshot.data == null) {
+              return Center(child: CircularProgressIndicator());
+            }
+            var list = [];
+            Map<String, dynamic> data =
+                snapshot.data!.data() as Map<String, dynamic>;
+            for (var i in data.keys) {
+              if (i == friend) {
+                for (var texts in data[i]) {
+                  list.add(texts);
                 }
               }
-
-              widget.scrollController.addListener(() {
-                if (widget.scrollController.position.pixels ==
-                    widget.scrollController.position.maxScrollExtent) {
-                  setState(() {
-                    currentMax = currentMax + currentMax;
-                  });
-                }
-              });
-
-              return ListView.builder(
-                reverse: true,
-                itemCount: list.length,
-                controller: widget.scrollController,
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onLongPress: widget.user!.email == list[index]['from']
-                        ? () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertMessageDelete(
-                                      type: list[index]['type'],
-                                      data: list[index],
-                                      user: widget.user,
-                                      friendName: widget.friendName);
-                                });
-                          }
-                        : null,
-                    child: MessageScreen(
-                      timeSend: list[index]['timeSend'],
-                      from: list[index]['from'],
-                      text: list[index]['body'],
-                      me: widget.user!.email == list[index]['from'],
-                      type: list[index]['type'],
-                    ),
-                  );
-                },
-              );
             }
-          }
-          return CircularProgressIndicator();
-        },
-      ),
+            list = List.from(list.reversed);
+            widget.scrollController.addListener(() {
+              if (widget.scrollController.position.pixels ==
+                  widget.scrollController.position.maxScrollExtent) {
+                setState(() {
+                  currentMax = currentMax + currentMax;
+                });
+              }
+            });
+            return ListView.builder(
+              reverse: true,
+              itemCount: list.length,
+              controller: widget.scrollController,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  onLongPress: widget.user!.email == list[index]['from']
+                      ? () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertMessageDelete(
+                                    type: list[index]['type'],
+                                    data: list[index],
+                                    user: widget.user!,
+                                    friendName: widget.friendName!);
+                              });
+                        }
+                      : null,
+                  child: MessageScreen(
+                    timeSend: list[index]['timeSend'],
+                    from: list[index]['from'],
+                    text: list[index]['body'],
+                    me: widget.user!.email == list[index]['from'],
+                    type: list[index]['type'],
+                  ),
+                );
+              },
+            );
+          }),
     );
   }
 }
@@ -180,13 +171,15 @@ class AlertMessageDelete extends StatelessWidget {
   });
 
   final Map data;
-  final User? user;
-  final String? friendName;
+  final User user;
+  final String friendName;
   final String type;
 
   @override
   Widget build(BuildContext context) {
     var _firestore = FirebaseFirestore.instance;
+    var friend = friendName.replaceAll('.', '_');
+    var me = user.email!.replaceAll('.', '_');
     return AlertDialog(
       title: Text('Confirmation!!!'),
       content: Text('Are you sure delete this message?'),
@@ -202,13 +195,17 @@ class AlertMessageDelete extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            var list = data;
-            _firestore.collection("messages").doc(user!.email).update({
-              "text": FieldValue.arrayRemove([list]),
+            _firestore.collection("messages").doc(user.email).update({
+              friend: FieldValue.arrayRemove([data]),
             });
             _firestore.collection("messages").doc(friendName).update({
-              "text": FieldValue.arrayRemove([list]),
+              me: FieldValue.arrayRemove([data]),
             });
+            data['seen'] = !data['seen'];
+            _firestore.collection("messages").doc(friendName).update({
+              me: FieldValue.arrayRemove([data]),
+            });
+
             if (type == 'picture') {
               FirebaseStorage.instance.refFromURL(data['body']).delete();
             }
