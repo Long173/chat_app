@@ -1,17 +1,17 @@
 import 'dart:io';
 
 import 'package:app_chat/repo/repository.dart';
-import 'package:app_chat/route.dart';
+import 'package:app_chat/config/route.dart';
 import 'package:app_chat/store/actions/message_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
-import 'package:app_chat/store/selectors/app_state_view_model.dart';
+import 'package:app_chat/store/view_model/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import '../../const.dart';
+import '../../config/const.dart';
 import 'chat_widget.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -103,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 _url = await repository.uploadChatImage(_image);
                               }
                               viewModel.dispatch(
-                                action: SendMessage(
+                                action: SendMessageMiddlewareAction.create(
                                   type: _image == null ? 'text' : 'picture',
                                   receiver: widget.friendName!,
                                   message: _image == null
@@ -111,7 +111,6 @@ class _ChatScreenState extends State<ChatScreen> {
                                       : _url.toString(),
                                   sender: user!.email!,
                                   timeSend: Timestamp.now(),
-                                  scrollController: scrollController,
                                 ),
                               );
                               messageController.clear();

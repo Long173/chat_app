@@ -2,7 +2,7 @@ import 'package:app_chat/screens/chat_screen/chat_screen.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/models/message.dart';
-import 'package:app_chat/store/selectors/app_state_view_model.dart';
+import 'package:app_chat/store/view_model/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +34,7 @@ class ConfirmNotiWidget extends StatelessWidget {
           builder: (context, vm) {
             return TextButton(
               onPressed: () {
-                vm.dispatch(action: LogOutAction());
+                vm.dispatch(action: LogoutMiddlewareAction());
               },
               child: Text('Yes'),
             );

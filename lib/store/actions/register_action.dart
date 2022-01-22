@@ -1,15 +1,33 @@
-import 'package:flutter/cupertino.dart';
 
-class Register {
-  final String email;
-  final String password;
-  final String name;
-  final String image;
-  final BuildContext context;
-  Register(
-      {required this.name,
-      required this.context,
-      required this.email,
-      required this.password,
-      this.image = 'assets/images/person.png'});
+import 'package:built_value/built_value.dart';
+
+part 'register_action.g.dart';
+
+abstract class AbstractRegister {}
+
+abstract class RegisterMiddlewareAction
+    implements
+        Built<RegisterMiddlewareAction, RegisterMiddlewareActionBuilder>,
+        AbstractRegister {
+  String get email;
+  String get password;
+  String get name;
+  String get image;
+  RegisterMiddlewareAction._();
+
+  factory RegisterMiddlewareAction.create({
+    required String email,
+    required String password,
+    required String name,
+    String image = 'assets/person.png'
+  }) =>
+      RegisterMiddlewareAction((update) => update
+        ..email = email
+        ..password = password);
+
+  factory RegisterMiddlewareAction(
+          [void Function(RegisterMiddlewareActionBuilder) updates]) =
+      _$RegisterMiddlewareAction;
 }
+
+// cmd: flutter pub run build_runner build

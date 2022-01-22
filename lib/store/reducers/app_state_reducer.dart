@@ -1,5 +1,5 @@
 import 'package:app_chat/store/actions/auth_action.dart';
-import 'package:app_chat/store/actions/change_user_image.dart';
+import 'package:app_chat/store/actions/update_user_info.dart';
 import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/actions/status_reducer_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
@@ -7,23 +7,23 @@ import 'package:redux/redux.dart';
 
 final Reducer<AppState> appStateReducer = combineReducers<AppState>([
   TypedReducer<AppState, StatusReducerAction>(reducerChangeStatus),
-  TypedReducer<AppState, ChangeRecentMess>(reducerChangeRecentMess),
-  TypedReducer<AppState, Authenticated>(reducerReducerLogin),
-  TypedReducer<AppState, UpdateUserInfo>(updateUserInfo),
+  TypedReducer<AppState, RencentChatReducerAction>(reducerChangeRecentMess),
+  TypedReducer<AppState, LoginReducerAction>(reducerReducerLogin),
+  TypedReducer<AppState, UpdateUserInfoReducerAction>(updateUserInfo),
 ]);
 
 AppState reducerChangeStatus(AppState state, StatusReducerAction action) {
   return state.rebuild((p0) => p0..status = action.newStatus);
 }
 
-AppState reducerChangeRecentMess(AppState state, ChangeRecentMess action) {
+AppState reducerChangeRecentMess(AppState state, RencentChatReducerAction action) {
   return state.rebuild((p0) => p0..recentMess = action.recentMess);
 }
 
-AppState reducerReducerLogin(AppState state, Authenticated action) {
+AppState reducerReducerLogin(AppState state, LoginReducerAction action) {
   return state.rebuild((a) => a..user = action.user.toBuilder());
 }
 
-AppState updateUserInfo(AppState state, UpdateUserInfo action) {
+AppState updateUserInfo(AppState state, UpdateUserInfoReducerAction action) {
   return state.rebuild((a) => a..user.image = action.image);
 }

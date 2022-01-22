@@ -1,26 +1,52 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:built_value/built_value.dart';
 
-class SendMessage {
-  final String message;
-  final String sender;
-  final ScrollController scrollController;
-  final String receiver;
-  final String type;
-  final Timestamp timeSend;
-  final bool seen;
+part 'message_action.g.dart';
 
-  const SendMessage({
-    required this.message,
-    required this.sender,
-    required this.scrollController,
-    required this.receiver,
-    required this.type,
-    required this.timeSend,
-    this.seen = true,
-  });
+abstract class AbstractMessage {}
+
+abstract class SendMessageMiddlewareAction
+    implements
+        Built<SendMessageMiddlewareAction, SendMessageMiddlewareActionBuilder>,
+        AbstractMessage {
+  String get message;
+  String get sender;
+  String get receiver;
+  String get type;
+  Timestamp get timeSend;
+  bool get seen;
+
+  SendMessageMiddlewareAction._();
+
+  factory SendMessageMiddlewareAction.create({
+    required String message,
+    required String sender,
+    required String receiver,
+    required String type,
+    required Timestamp timeSend,
+    bool seen = true,
+  }) =>
+      SendMessageMiddlewareAction((update) => update
+        ..message = message
+        ..sender = sender
+        ..receiver = receiver
+        ..type = type
+        ..timeSend = timeSend
+        ..seen = seen);
+
+  factory SendMessageMiddlewareAction(
+          [void Function(SendMessageMiddlewareActionBuilder) updates]) =
+      _$SendMessageMiddlewareAction;
 }
 
-class DeleteMessage {
-  const DeleteMessage();
+
+abstract class DeleteMessageMiddlewareAction
+    implements
+        Built<DeleteMessageMiddlewareAction, DeleteMessageMiddlewareActionBuilder>,
+        AbstractMessage {
+  DeleteMessageMiddlewareAction._();
+
+  factory DeleteMessageMiddlewareAction(
+          [void Function(DeleteMessageMiddlewareActionBuilder) updates]) =
+      _$DeleteMessageMiddlewareAction;
 }

@@ -6,30 +6,32 @@ part of 'recent_mess_action.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
-class _$GetAllRecentMess extends GetAllRecentMess {
+class _$RencentChatMiddlewareAction extends RencentChatMiddlewareAction {
   @override
   final User user;
 
-  factory _$GetAllRecentMess(
-          [void Function(GetAllRecentMessBuilder)? updates]) =>
-      (new GetAllRecentMessBuilder()..update(updates)).build();
+  factory _$RencentChatMiddlewareAction(
+          [void Function(RencentChatMiddlewareActionBuilder)? updates]) =>
+      (new RencentChatMiddlewareActionBuilder()..update(updates)).build();
 
-  _$GetAllRecentMess._({required this.user}) : super._() {
-    BuiltValueNullFieldError.checkNotNull(user, 'GetAllRecentMess', 'user');
+  _$RencentChatMiddlewareAction._({required this.user}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(
+        user, 'RencentChatMiddlewareAction', 'user');
   }
 
   @override
-  GetAllRecentMess rebuild(void Function(GetAllRecentMessBuilder) updates) =>
+  RencentChatMiddlewareAction rebuild(
+          void Function(RencentChatMiddlewareActionBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  GetAllRecentMessBuilder toBuilder() =>
-      new GetAllRecentMessBuilder()..replace(this);
+  RencentChatMiddlewareActionBuilder toBuilder() =>
+      new RencentChatMiddlewareActionBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is GetAllRecentMess && user == other.user;
+    return other is RencentChatMiddlewareAction && user == other.user;
   }
 
   @override
@@ -39,22 +41,25 @@ class _$GetAllRecentMess extends GetAllRecentMess {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('GetAllRecentMess')..add('user', user))
+    return (newBuiltValueToStringHelper('RencentChatMiddlewareAction')
+          ..add('user', user))
         .toString();
   }
 }
 
-class GetAllRecentMessBuilder
-    implements Builder<GetAllRecentMess, GetAllRecentMessBuilder> {
-  _$GetAllRecentMess? _$v;
+class RencentChatMiddlewareActionBuilder
+    implements
+        Builder<RencentChatMiddlewareAction,
+            RencentChatMiddlewareActionBuilder> {
+  _$RencentChatMiddlewareAction? _$v;
 
   User? _user;
   User? get user => _$this._user;
   set user(User? user) => _$this._user = user;
 
-  GetAllRecentMessBuilder();
+  RencentChatMiddlewareActionBuilder();
 
-  GetAllRecentMessBuilder get _$this {
+  RencentChatMiddlewareActionBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _user = $v.user;
@@ -64,52 +69,53 @@ class GetAllRecentMessBuilder
   }
 
   @override
-  void replace(GetAllRecentMess other) {
+  void replace(RencentChatMiddlewareAction other) {
     ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$GetAllRecentMess;
+    _$v = other as _$RencentChatMiddlewareAction;
   }
 
   @override
-  void update(void Function(GetAllRecentMessBuilder)? updates) {
+  void update(void Function(RencentChatMiddlewareActionBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$GetAllRecentMess build() {
+  _$RencentChatMiddlewareAction build() {
     final _$result = _$v ??
-        new _$GetAllRecentMess._(
+        new _$RencentChatMiddlewareAction._(
             user: BuiltValueNullFieldError.checkNotNull(
-                user, 'GetAllRecentMess', 'user'));
+                user, 'RencentChatMiddlewareAction', 'user'));
     replace(_$result);
     return _$result;
   }
 }
 
-class _$ChangeRecentMess extends ChangeRecentMess {
+class _$RencentChatReducerAction extends RencentChatReducerAction {
   @override
   final List<RecentMessage> recentMess;
 
-  factory _$ChangeRecentMess(
-          [void Function(ChangeRecentMessBuilder)? updates]) =>
-      (new ChangeRecentMessBuilder()..update(updates)).build();
+  factory _$RencentChatReducerAction(
+          [void Function(RencentChatReducerActionBuilder)? updates]) =>
+      (new RencentChatReducerActionBuilder()..update(updates)).build();
 
-  _$ChangeRecentMess._({required this.recentMess}) : super._() {
+  _$RencentChatReducerAction._({required this.recentMess}) : super._() {
     BuiltValueNullFieldError.checkNotNull(
-        recentMess, 'ChangeRecentMess', 'recentMess');
+        recentMess, 'RencentChatReducerAction', 'recentMess');
   }
 
   @override
-  ChangeRecentMess rebuild(void Function(ChangeRecentMessBuilder) updates) =>
+  RencentChatReducerAction rebuild(
+          void Function(RencentChatReducerActionBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  ChangeRecentMessBuilder toBuilder() =>
-      new ChangeRecentMessBuilder()..replace(this);
+  RencentChatReducerActionBuilder toBuilder() =>
+      new RencentChatReducerActionBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is ChangeRecentMess && recentMess == other.recentMess;
+    return other is RencentChatReducerAction && recentMess == other.recentMess;
   }
 
   @override
@@ -119,24 +125,25 @@ class _$ChangeRecentMess extends ChangeRecentMess {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('ChangeRecentMess')
+    return (newBuiltValueToStringHelper('RencentChatReducerAction')
           ..add('recentMess', recentMess))
         .toString();
   }
 }
 
-class ChangeRecentMessBuilder
-    implements Builder<ChangeRecentMess, ChangeRecentMessBuilder> {
-  _$ChangeRecentMess? _$v;
+class RencentChatReducerActionBuilder
+    implements
+        Builder<RencentChatReducerAction, RencentChatReducerActionBuilder> {
+  _$RencentChatReducerAction? _$v;
 
   List<RecentMessage>? _recentMess;
   List<RecentMessage>? get recentMess => _$this._recentMess;
   set recentMess(List<RecentMessage>? recentMess) =>
       _$this._recentMess = recentMess;
 
-  ChangeRecentMessBuilder();
+  RencentChatReducerActionBuilder();
 
-  ChangeRecentMessBuilder get _$this {
+  RencentChatReducerActionBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _recentMess = $v.recentMess;
@@ -146,22 +153,22 @@ class ChangeRecentMessBuilder
   }
 
   @override
-  void replace(ChangeRecentMess other) {
+  void replace(RencentChatReducerAction other) {
     ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$ChangeRecentMess;
+    _$v = other as _$RencentChatReducerAction;
   }
 
   @override
-  void update(void Function(ChangeRecentMessBuilder)? updates) {
+  void update(void Function(RencentChatReducerActionBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$ChangeRecentMess build() {
+  _$RencentChatReducerAction build() {
     final _$result = _$v ??
-        new _$ChangeRecentMess._(
+        new _$RencentChatReducerAction._(
             recentMess: BuiltValueNullFieldError.checkNotNull(
-                recentMess, 'ChangeRecentMess', 'recentMess'));
+                recentMess, 'RencentChatReducerAction', 'recentMess'));
     replace(_$result);
     return _$result;
   }

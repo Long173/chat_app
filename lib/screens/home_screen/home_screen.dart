@@ -2,15 +2,15 @@ import 'package:app_chat/repo/repository.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
-import 'package:app_chat/store/selectors/app_state_view_model.dart';
+import 'package:app_chat/store/view_model/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import '../../const.dart';
-import '../../keys.dart';
-import '../../route.dart';
+import '../../config/const.dart';
+import '../../config/keys.dart';
+import '../../config/route.dart';
 import 'home_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -101,13 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       AppStateViewModel.create(store),
                   onInitialBuild: (viewModel) {
                     viewModel.dispatch(
-                        action: GetAllRecentMess.create(newUser: user!));
+                        action: RencentChatMiddlewareAction.create(newUser: user!));
                   },
                   builder: (BuildContext context, vm) {
                     final recent = vm.recentMess;
                     final status = vm.status;
                     if (vm.user == null) {
-                     vm.dispatch(action: VerifyUser(user: user!));
+                     vm.dispatch(action: VerifyUserMiddlewareAction.create(newUser: user!));
                     }
                     return Container(
                       child: status == 'idle'

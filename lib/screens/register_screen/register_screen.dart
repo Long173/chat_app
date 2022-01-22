@@ -2,14 +2,14 @@ import 'package:app_chat/screens/login_screen/login_widgets.dart';
 import 'package:app_chat/screens/register_screen/register_widgets.dart';
 import 'package:app_chat/store/actions/register_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
-import 'package:app_chat/store/selectors/app_state_view_model.dart';
+import 'package:app_chat/store/view_model/app_state_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import '../../const.dart';
-import '../../keys.dart';
-import '../../validation.dart';
+import '../../config/const.dart';
+import '../../config/keys.dart';
+import '../../config/validation.dart';
 
 class RegisterScreen extends StatefulWidget {
   static final _navigatorKey = NavKey.navKey;
@@ -105,11 +105,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validation.passwordValidation(password);
                       validation.matchPassword(password, confirm);
                       viewModel.dispatch(
-                        action: Register(
+                        action: RegisterMiddlewareAction.create(
                           name: fullName,
                           email: email,
                           password: password,
-                          context: context,
                         ),
                       );
                     },

@@ -4,6 +4,7 @@ import 'package:app_chat/store/actions/message_action.dart';
 import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/actions/register_action.dart';
 import 'package:app_chat/store/actions/status_reducer_action.dart';
+import 'package:app_chat/store/actions/update_user_info.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,8 +16,8 @@ import 'package:intl/intl.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:redux_epics/redux_epics.dart';
 
-import '../../keys.dart';
-import '../../route.dart';
+import '../../config/keys.dart';
+import '../../config/route.dart';
 
 class AppMiddleware implements EpicClass<AppState> {
   static final _navigatorKey = NavKey.navKey;
@@ -34,17 +35,19 @@ class AppMiddleware implements EpicClass<AppState> {
       sendMessage,
       authFirebase,
       register,
+      updateUserInfo,
     ])(actions, store);
   }
 
   Stream<dynamic> getAllRecentMess(
       Stream<dynamic> actions, EpicStore<AppState> store) async* {
     await for (final action in actions) {
-      if (action is GetAllRecentMess) {
+      if (action is RencentChatMiddlewareAction) {
         try {
           yield StatusReducerAction.create(status: "isLoading");
-          List<RecentMessage> recentFriend = await repository.getRecentFriend(action.user);
-          yield ChangeRecentMess.create(newMess: recentFriend);
+          List<RecentMessage> recentFriend =
+              await repository.getRecentFriend(action.user);
+          yield RencentChatReducerAction.create(newMess: recentFriend);
         } catch (e) {
           print(e);
         } finally {
@@ -57,17 +60,27 @@ class AppMiddleware implements EpicClass<AppState> {
   Stream<dynamic> sendMessage(
       Stream<dynamic> actions, EpicStore<AppState> store) async* {
     await for (final action in actions) {
-      if (action is SendMessage) {
+      if (action is SendMessageMiddlewareAction) {
         try {
           yield StatusReducerAction.create(status: "isLoading");
-          yield repository.sendMess(
-              action.message,
-              action.sender,
-              action.receiver,
-              action.type,
-              action.timeSend,
-              action.scrollController,
-              action.seen);
+          yield repository.sendMess(action.message, action.sender,
+              action.receiver, action.type, action.timeSend, action.seen);
+        } catch (e) {
+          Fluttertoast.showToast(msg: e.toString());
+        } finally {
+          yield StatusReducerAction.create(status: "idle");
+        }
+      }
+    }
+  }
+
+  Stream<dynamic> updateUserInfo(
+      Stream<dynamic> actions, EpicStore<AppState> store) async* {
+    await for (final action in actions) {
+      if (action is UpdateUserInfoMiddlewareAction) {
+        try {
+          yield StatusReducerAction.create(status: "isLoading");
+          yield UpdateUserInfoReducerAction.create(newImage: action.image);
         } catch (e) {
           Fluttertoast.showToast(msg: e.toString());
         } finally {
@@ -82,13 +95,15 @@ class AppMiddleware implements EpicClass<AppState> {
     EpicStore<AppState> store,
   ) async* {
     await for (final action in actions) {
-      if (action is VerifyUser) {
+      if (action is VerifyUserMiddlewareAction) {
         var appUser = await repository.infoUser(action.user);
-        yield Authenticated(user: appUser);
+        yield LoginReducerAction.create(newUser: appUser);
       }
-      if (action is LogIn) {
-        ProgressDialog progressDialog = ProgressDialog(action.context,
-            message: Text('Please wait'), title: Text('Logging In'));
+      if (action is LoginMiddlewareAction) {
+        ProgressDialog progressDialog = ProgressDialog(
+            _navigatorKey.currentState!.overlay!.context,
+            message: Text('Please wait'),
+            title: Text('Logging In'));
         progressDialog.show();
         try {
           yield StatusReducerAction.create(status: "isLoading");
@@ -98,7 +113,7 @@ class AppMiddleware implements EpicClass<AppState> {
             progressDialog.dismiss();
             _navigatorKey.currentState!.pushReplacementNamed(Routes.home);
             var appUser = await repository.infoUser(user.user!);
-            yield Authenticated(user: appUser);
+            yield LoginReducerAction.create(newUser: appUser);
           }
         } on FirebaseAuthException catch (e) {
           progressDialog.dismiss();
@@ -114,7 +129,7 @@ class AppMiddleware implements EpicClass<AppState> {
           yield StatusReducerAction.create(status: "idle");
         }
       }
-      if (action is LogOutAction) {
+      if (action is LogoutMiddlewareAction) {
         try {
           yield StatusReducerAction.create(status: "isLoading");
           FirebaseAuth.instance.signOut();
@@ -133,9 +148,11 @@ class AppMiddleware implements EpicClass<AppState> {
     EpicStore<AppState> store,
   ) async* {
     await for (final action in actions) {
-      if (action is Register) {
-        ProgressDialog progressDialog = ProgressDialog(action.context,
-            message: Text('Please wait'), title: Text('Signing up'));
+      if (action is RegisterMiddlewareAction) {
+        ProgressDialog progressDialog = ProgressDialog(
+            _navigatorKey.currentState!.overlay!.context,
+            message: Text('Please wait'),
+            title: Text('Signing up'));
         progressDialog.show();
         try {
           yield StatusReducerAction.create(status: "isLoading");
