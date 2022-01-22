@@ -63,20 +63,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Column(
                 children: [
                   InputField(
+                      textInputType: TextInputType.text,
                       controller: fullNameController,
                       hintText: 'Full Name',
                       icon: Icons.person),
                   InputField(
+                      textInputType: TextInputType.emailAddress,
                       controller: emailController,
                       hintText: 'Email',
                       icon: Icons.email),
                   InputField(
+                    textInputType: TextInputType.text,
                     controller: passwordController,
                     hintText: 'Password',
                     icon: Icons.lock,
                     obscure: true,
                   ),
                   InputField(
+                    textInputType: TextInputType.text,
                     controller: confirmController,
                     hintText: 'Confirm Password',
                     icon: Icons.lock,
@@ -109,7 +113,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       );
                     },
-                    child: RegisterButton(),
+                    child: CustomButton(
+                      text: "Sign Up",
+                    ),
                   );
                 },
               ),

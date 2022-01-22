@@ -51,26 +51,36 @@ class _UserScreenState extends State<UserScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () async {
-                      _image = await repository.getImage();
-                      setState(() {});
-                    },
-                    child: CircleAvatar(
-                      radius: 100,
-                      child: ClipOval(
-                        child: SizedBox(
-                          width: 180,
-                          height: 180,
-                          child: (_image != null)
-                              ? Image.file(
-                                  _image!,
-                                  fit: BoxFit.fill,
-                                )
-                              : Image.network('${user!.image}'),
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 100,
+                        child: ClipOval(
+                          child: SizedBox(
+                            width: 180,
+                            height: 180,
+                            child: (_image != null)
+                                ? Image.file(
+                                    _image!,
+                                    fit: BoxFit.fill,
+                                  )
+                                : Image.network('${user!.image}'),
+                          ),
                         ),
                       ),
-                    ),
+                      Positioned(
+                        bottom: -10,
+                        left: 130,
+                        child: IconButton(
+                          icon: Icon(Icons.add_a_photo),
+                          iconSize: 40,
+                          onPressed: () async {
+                            _image = await repository.getImage();
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 32,

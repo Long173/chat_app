@@ -24,6 +24,13 @@ class _LoginScreenState extends State<LoginScreen> {
   var validation = Validation();
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBackgroundColor,
@@ -63,7 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 InputField(
                   controller: emailController,
                   icon: Icons.email,
-                  hintText: 'Type your email',
+                  hintText: 'Enter your email',
+                  textInputType: TextInputType.emailAddress,
                 ),
                 Text(
                   'Password',
@@ -74,7 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 InputField(
                   controller: passwordController,
                   icon: Icons.lock,
-                  hintText: 'Type your password',
+                  textInputType: TextInputType.text,
+                  hintText: 'Enter your password',
                   obscure: true,
                 ),
                 SizedBox(
@@ -93,10 +102,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         validation.emailValidation(email);
                         validation.passwordValidation(password);
                         vm.dispatch(
-                            action: LogIn(email: email, password: password, context: context));
-                    
+                            action: LogIn(
+                                email: email,
+                                password: password,
+                                context: context));
                       },
-                      child: LoginButton(),
+                      child: CustomButton(text: 'Log in',),
                     );
                   },
                 ),
