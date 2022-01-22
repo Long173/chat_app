@@ -1,62 +1,79 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_state.dart';
+part of 'app_state_view_model.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
 // **************************************************************************
 
-class _$AppState extends AppState {
+class _$AppStateViewModel extends AppStateViewModel {
   @override
   final String status;
   @override
   final BuiltList<RecentMessage> recentMess;
   @override
   final AppUser? user;
+  @override
+  final Function({required dynamic action}) dispatch;
 
-  factory _$AppState([void Function(AppStateBuilder)? updates]) =>
-      (new AppStateBuilder()..update(updates)).build();
+  factory _$AppStateViewModel(
+          [void Function(AppStateViewModelBuilder)? updates]) =>
+      (new AppStateViewModelBuilder()..update(updates)).build();
 
-  _$AppState._({required this.status, required this.recentMess, this.user})
+  _$AppStateViewModel._(
+      {required this.status,
+      required this.recentMess,
+      this.user,
+      required this.dispatch})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(status, 'AppState', 'status');
-    BuiltValueNullFieldError.checkNotNull(recentMess, 'AppState', 'recentMess');
+    BuiltValueNullFieldError.checkNotNull(
+        status, 'AppStateViewModel', 'status');
+    BuiltValueNullFieldError.checkNotNull(
+        recentMess, 'AppStateViewModel', 'recentMess');
+    BuiltValueNullFieldError.checkNotNull(
+        dispatch, 'AppStateViewModel', 'dispatch');
   }
 
   @override
-  AppState rebuild(void Function(AppStateBuilder) updates) =>
+  AppStateViewModel rebuild(void Function(AppStateViewModelBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  AppStateBuilder toBuilder() => new AppStateBuilder()..replace(this);
+  AppStateViewModelBuilder toBuilder() =>
+      new AppStateViewModelBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is AppState &&
+    final dynamic _$dynamicOther = other;
+    return other is AppStateViewModel &&
         status == other.status &&
         recentMess == other.recentMess &&
-        user == other.user;
+        user == other.user &&
+        dispatch == _$dynamicOther.dispatch;
   }
 
   @override
   int get hashCode {
-    return $jf(
-        $jc($jc($jc(0, status.hashCode), recentMess.hashCode), user.hashCode));
+    return $jf($jc(
+        $jc($jc($jc(0, status.hashCode), recentMess.hashCode), user.hashCode),
+        dispatch.hashCode));
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('AppState')
+    return (newBuiltValueToStringHelper('AppStateViewModel')
           ..add('status', status)
           ..add('recentMess', recentMess)
-          ..add('user', user))
+          ..add('user', user)
+          ..add('dispatch', dispatch))
         .toString();
   }
 }
 
-class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
-  _$AppState? _$v;
+class AppStateViewModelBuilder
+    implements Builder<AppStateViewModel, AppStateViewModelBuilder> {
+  _$AppStateViewModel? _$v;
 
   String? _status;
   String? get status => _$this._status;
@@ -72,42 +89,48 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
   AppUserBuilder get user => _$this._user ??= new AppUserBuilder();
   set user(AppUserBuilder? user) => _$this._user = user;
 
-  AppStateBuilder() {
-    AppState._initializeBuilder(this);
-  }
+  Function({required dynamic action})? _dispatch;
+  Function({required dynamic action})? get dispatch => _$this._dispatch;
+  set dispatch(Function({required dynamic action})? dispatch) =>
+      _$this._dispatch = dispatch;
 
-  AppStateBuilder get _$this {
+  AppStateViewModelBuilder();
+
+  AppStateViewModelBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _status = $v.status;
       _recentMess = $v.recentMess.toBuilder();
       _user = $v.user?.toBuilder();
+      _dispatch = $v.dispatch;
       _$v = null;
     }
     return this;
   }
 
   @override
-  void replace(AppState other) {
+  void replace(AppStateViewModel other) {
     ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$AppState;
+    _$v = other as _$AppStateViewModel;
   }
 
   @override
-  void update(void Function(AppStateBuilder)? updates) {
+  void update(void Function(AppStateViewModelBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$AppState build() {
-    _$AppState _$result;
+  _$AppStateViewModel build() {
+    _$AppStateViewModel _$result;
     try {
       _$result = _$v ??
-          new _$AppState._(
+          new _$AppStateViewModel._(
               status: BuiltValueNullFieldError.checkNotNull(
-                  status, 'AppState', 'status'),
+                  status, 'AppStateViewModel', 'status'),
               recentMess: recentMess.build(),
-              user: _user?.build());
+              user: _user?.build(),
+              dispatch: BuiltValueNullFieldError.checkNotNull(
+                  dispatch, 'AppStateViewModel', 'dispatch'));
     } catch (_) {
       late String _$failedField;
       try {
@@ -117,7 +140,7 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
         _user?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'AppState', _$failedField, e.toString());
+            'AppStateViewModel', _$failedField, e.toString());
       }
       rethrow;
     }

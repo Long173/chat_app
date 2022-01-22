@@ -1,31 +1,41 @@
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/models/user.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
 
-class AppStateViewModel {
-  final String status;
-  final List<RecentMessage>? recentMess;
-  final AppUser? user;
-  final Function({required dynamic action}) dispatch;
+part 'app_state_view_model.g.dart';
 
-  AppStateViewModel({
-    required this.recentMess,
-    required this.status,
-    required this.dispatch,
-    required this.user
-  });
+abstract class AbstractAppStateViewModel {}
+
+abstract class AppStateViewModel
+    implements
+        Built<AppStateViewModel, AppStateViewModelBuilder>,
+        AbstractAppStateViewModel {
+  String get status;
+  BuiltList<RecentMessage> get recentMess;
+  AppUser? get user;
+  Function({required dynamic action}) get dispatch;
+
+  AppStateViewModel._();
 
   factory AppStateViewModel.create(Store<AppState> store) {
     onDispatch({required dynamic action}) {
       store.dispatch(action);
     }
 
-    return AppStateViewModel(
-      recentMess: store.state.recentMess,
-      status: store.state.status,
-      user: store.state.user,
-      dispatch: onDispatch,
-    );
+    return AppStateViewModel((update) => update
+      ..status = store.state.status
+      ..recentMess = ListBuilder(store.state.recentMess)
+      ..user = store.state.user?.toBuilder()
+      ..dispatch = onDispatch);
   }
+  factory AppStateViewModel([void Function(AppStateViewModelBuilder) updates]) =
+      _$AppStateViewModel;
 }
+
+//  recentMess: store.state.recentMess,
+//       status: store.state.status,
+//       user: store.state.user,
+//       dispatch: onDispatch,

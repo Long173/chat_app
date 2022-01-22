@@ -92,7 +92,7 @@ class RencentChatMiddlewareActionBuilder
 
 class _$RencentChatReducerAction extends RencentChatReducerAction {
   @override
-  final List<RecentMessage> recentMess;
+  final BuiltList<RecentMessage> recentMess;
 
   factory _$RencentChatReducerAction(
           [void Function(RencentChatReducerActionBuilder)? updates]) =>
@@ -136,9 +136,10 @@ class RencentChatReducerActionBuilder
         Builder<RencentChatReducerAction, RencentChatReducerActionBuilder> {
   _$RencentChatReducerAction? _$v;
 
-  List<RecentMessage>? _recentMess;
-  List<RecentMessage>? get recentMess => _$this._recentMess;
-  set recentMess(List<RecentMessage>? recentMess) =>
+  ListBuilder<RecentMessage>? _recentMess;
+  ListBuilder<RecentMessage> get recentMess =>
+      _$this._recentMess ??= new ListBuilder<RecentMessage>();
+  set recentMess(ListBuilder<RecentMessage>? recentMess) =>
       _$this._recentMess = recentMess;
 
   RencentChatReducerActionBuilder();
@@ -146,7 +147,7 @@ class RencentChatReducerActionBuilder
   RencentChatReducerActionBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _recentMess = $v.recentMess;
+      _recentMess = $v.recentMess.toBuilder();
       _$v = null;
     }
     return this;
@@ -165,10 +166,21 @@ class RencentChatReducerActionBuilder
 
   @override
   _$RencentChatReducerAction build() {
-    final _$result = _$v ??
-        new _$RencentChatReducerAction._(
-            recentMess: BuiltValueNullFieldError.checkNotNull(
-                recentMess, 'RencentChatReducerAction', 'recentMess'));
+    _$RencentChatReducerAction _$result;
+    try {
+      _$result = _$v ??
+          new _$RencentChatReducerAction._(recentMess: recentMess.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'recentMess';
+        recentMess.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'RencentChatReducerAction', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

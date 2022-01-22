@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/models/user.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,7 +13,7 @@ import 'package:intl/intl.dart';
 abstract class AbstractRepository {
   Future<AppUser> infoUser(User user);
   Future<List> getListFriend(User user);
-  Future<List<RecentMessage>> getRecentFriend(User user);
+  Future<BuiltList<RecentMessage>> getRecentFriend(User user);
   Future getAvatar(String name);
   Future<File?> getImage();
   Future uploadChatImage(var image);
@@ -53,8 +54,8 @@ class Repository implements AbstractRepository {
   }
 
   @override
-  Future<List<RecentMessage>> getRecentFriend(User user) async {
-    List<RecentMessage> setList = [];
+  Future<BuiltList<RecentMessage>> getRecentFriend(User user) async {
+    var setList = BuiltList<RecentMessage>([]);
     var messSnapshot =
         await firebase.collection("messages").doc(user.email).get();
 
@@ -82,12 +83,15 @@ class Repository implements AbstractRepository {
           ..image = ava
           ..seen = seen
           ..realTime = textList.last['timeSend']);
-        setList.add(recentMess);
+        setList = setList.rebuild((p0) => p0..add(recentMess));
       }
     }
-    setList.sort((a, b) {
-      return b.time.compareTo(a.time);
-    });
+    setList = setList.rebuild(
+      (p0) => p0
+        ..sort((a, b) {
+          return b.time.compareTo(a.time);
+        }),
+    );
     return setList;
   }
 

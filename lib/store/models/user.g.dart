@@ -85,7 +85,6 @@ class AppUserBuilder implements Builder<AppUser, AppUserBuilder> {
   String? get dateCreate => _$this._dateCreate;
   set dateCreate(String? dateCreate) => _$this._dateCreate = dateCreate;
 
-  AppUserBuilder();
 
   AppUserBuilder get _$this {
     final $v = _$v;

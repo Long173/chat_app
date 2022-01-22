@@ -27,11 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List _listFriend = [];
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     var _index = 0;
     return user == null
@@ -101,18 +96,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       AppStateViewModel.create(store),
                   onInitialBuild: (viewModel) {
                     viewModel.dispatch(
-                        action: RencentChatMiddlewareAction.create(newUser: user!));
+                        action:
+                            RencentChatMiddlewareAction.create(newUser: user!));
                   },
                   builder: (BuildContext context, vm) {
                     final recent = vm.recentMess;
                     final status = vm.status;
                     if (vm.user == null) {
-                     vm.dispatch(action: VerifyUserMiddlewareAction.create(newUser: user!));
+                      vm.dispatch(
+                          action: VerifyUserMiddlewareAction.create(
+                              newUser: user!));
                     }
                     return Container(
                       child: status == 'idle'
                           ? RecentChats(
-                              lenghtChat: recent!.length, recent: recent, user : user!)
+                              lenghtChat: recent.length,
+                              recent: recent.toList(),
+                              user: user!)
                           : Expanded(
                               flex: 4,
                               child: LoadingRecentChat(),

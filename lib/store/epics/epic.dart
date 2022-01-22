@@ -6,7 +6,6 @@ import 'package:app_chat/store/actions/register_action.dart';
 import 'package:app_chat/store/actions/status_reducer_action.dart';
 import 'package:app_chat/store/actions/update_user_info.dart';
 import 'package:app_chat/store/models/app_state.dart';
-import 'package:app_chat/store/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,8 +44,7 @@ class AppMiddleware implements EpicClass<AppState> {
       if (action is RencentChatMiddlewareAction) {
         try {
           yield StatusReducerAction.create(status: "isLoading");
-          List<RecentMessage> recentFriend =
-              await repository.getRecentFriend(action.user);
+          final recentFriend = await repository.getRecentFriend(action.user);
           yield RencentChatReducerAction.create(newMess: recentFriend);
         } catch (e) {
           print(e);
