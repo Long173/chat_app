@@ -1,8 +1,12 @@
+import 'package:app_chat/store/models/app_state.dart';
+import 'package:app_chat/store/view_model/app_state_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 
 class BuildChatScreen extends StatefulWidget {
   BuildChatScreen({
@@ -105,43 +109,48 @@ class MessageScreen extends StatelessWidget {
       required this.timeSend});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-        child: Column(
-          crossAxisAlignment:
-              me ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Text(
-              from,
-            ),
-            Material(
-              color: me ? Colors.orangeAccent : Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              elevation: 6,
-              child: Container(
-                constraints: BoxConstraints(maxWidth: 250),
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                child: type == 'text'
-                    ? Text(
-                        text,
-                        style: TextStyle(
-                          color: me ? Colors.white : Colors.black,
-                        ),
-                      )
-                    : Image.network(
-                        text,
-                        height: 250,
-                      ),
+    return StoreConnector<AppState, AppStateViewModel>(
+        converter: (Store<AppState> store) => AppStateViewModel.create(store),
+        builder: (BuildContext context, vm) {
+          return Container(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
+              child: Column(
+                crossAxisAlignment:
+                    me ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    from,
+                  ),
+                  Material(
+                    color: me ? Colors.purple[800] : Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(15),
+                    elevation: 6,
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: 250),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      child: type == 'text'
+                          ? Text(
+                              text,
+                              style: TextStyle(
+                                color: me ? Colors.white : Colors.black,
+                              ),
+                            )
+                          : Image.network(
+                              text,
+                              height: 250,
+                            ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                ],
               ),
             ),
-            SizedBox(
-              width: 10,
-            ),
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 

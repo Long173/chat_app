@@ -10,6 +10,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 
+import '../../main.dart';
+
 class ConfirmNotiWidget extends StatelessWidget {
   const ConfirmNotiWidget({
     Key? key,
@@ -218,16 +220,17 @@ class _BuildHomePageState extends State<BuildHomePage> {
   }
 }
 
-class FavoriteContacts extends StatefulWidget {
+class FriendContact extends StatefulWidget {
   final List listFriend;
-  FavoriteContacts({required this.listFriend});
+  FriendContact({required this.listFriend});
 
   @override
-  State<FavoriteContacts> createState() => _FavoriteContactsState();
+  State<FriendContact> createState() => _FriendContactState();
 }
 
-class _FavoriteContactsState extends State<FavoriteContacts> {
+class _FriendContactState extends State<FriendContact> {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
+  var friendController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +246,6 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
                 Text(
                   'Friends',
                   style: TextStyle(
-                    color: Colors.blueGrey,
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.0,
@@ -255,54 +257,40 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
           Container(
             height: 120.0,
             child: ListView.builder(
+              controller: friendController,
               padding: EdgeInsets.only(left: 10.0),
               scrollDirection: Axis.horizontal,
               itemCount: widget.listFriend.length,
               itemBuilder: (BuildContext context, int index) {
-                return FutureBuilder(
-                  future: firebase
-                      .collection("users")
-                      .doc(widget.listFriend[index])
-                      .get(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if (!snapshot.hasData) {
-                      return Container();
-                    } else {
-                      Map<String, dynamic> data =
-                          snapshot.data!.data() as Map<String, dynamic>;
-                      return GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChatScreen(
-                              friendName: widget.listFriend[index],
-                            ),
+                return GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatScreen(
+                        friendName: widget.listFriend[index].email,
+                      ),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Column(
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 35.0,
+                          backgroundImage:
+                              NetworkImage(widget.listFriend[index].avatar),
+                        ),
+                        SizedBox(height: 6.0),
+                        Text(
+                          widget.listFriend[index].name,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Column(
-                            children: <Widget>[
-                              CircleAvatar(
-                                radius: 35.0,
-                                backgroundImage: NetworkImage(data['image']),
-                              ),
-                              SizedBox(height: 6.0),
-                              Text(
-                                data['name'],
-                                style: TextStyle(
-                                  color: Colors.blueGrey,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                  },
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
@@ -314,7 +302,7 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
 }
 
 class RecentChats extends StatelessWidget {
-  const RecentChats({
+  RecentChats({
     Key? key,
     required this.lenghtChat,
     required this.recent,
@@ -327,73 +315,80 @@ class RecentChats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var recentController = ScrollController();
     var _firestore = FirebaseFirestore.instance;
     return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-          ),
-          child: ListView.builder(
-              itemCount: lenghtChat,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  child: GestureDetector(
-                      onTap: () async {
-                        if (recent![index].seen == false) {
-                          var data = {};
-                          data['body'] = recent![index].body;
-                          data['from'] = recent![index].sender;
-                          data['seen'] = recent![index].seen;
-                          data['timeSend'] = recent![index].realTime;
-                          data['to'] = user.email;
-                          data['type'] = recent![index].type;
-                          var sender =
-                              recent![index].sender.replaceAll('.', '_');
-                          await _firestore
-                              .collection("messages")
-                              .doc(user.email)
-                              .update({
-                            sender: FieldValue.arrayRemove([data]),
-                          });
-                          data['seen'] = !recent![index].seen;
-                          await _firestore
-                              .collection("messages")
-                              .doc(user.email)
-                              .set({
-                            sender: FieldValue.arrayUnion([data]),
-                          }, SetOptions(merge: true));
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ChatScreen(friendName: recent![index].sender),
+      child: StoreConnector<AppState, AppStateViewModel>(
+          converter: (Store<AppState> store) => AppStateViewModel.create(store),
+          builder: (BuildContext context, vm) {
+            return Container(
+              decoration: BoxDecoration(
+                color: vm.isDark ? Colors.black : Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+                child: ListView.builder(
+                    itemCount: lenghtChat,
+                    controller: recentController,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
+                        child: GestureDetector(
+                          onTap: () async {
+                            if (recent![index].seen == false) {
+                              var data = {};
+                              data['body'] = recent![index].body;
+                              data['from'] = recent![index].sender;
+                              data['seen'] = recent![index].seen;
+                              data['timeSend'] = recent![index].realTime;
+                              data['to'] = user.email;
+                              data['type'] = recent![index].type;
+                              var sender =
+                                  recent![index].sender.replaceAll('.', '_');
+                              await _firestore
+                                  .collection("messages")
+                                  .doc(user.email)
+                                  .update({
+                                sender: FieldValue.arrayRemove([data]),
+                              });
+                              data['seen'] = !recent![index].seen;
+                              await _firestore
+                                  .collection("messages")
+                                  .doc(user.email)
+                                  .set({
+                                sender: FieldValue.arrayUnion([data]),
+                              }, SetOptions(merge: true));
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                    friendName: recent![index].sender),
+                              ),
+                            );
+                          },
+                          child: MessageCard(
+                            avt: recent![index].image,
+                            type: recent![index].type,
+                            sender: recent![index].sender,
+                            lastMessage: recent![index].body,
+                            timeSend: recent![index].time,
+                            seen: recent![index].seen,
                           ),
-                        );
-                      },
-                      child: MessageCard(
-                        avt: recent![index].image,
-                        type: recent![index].type,
-                        sender: recent![index].sender,
-                        lastMessage: recent![index].body,
-                        timeSend: recent![index].time,
-                        seen: recent![index].seen,
-                      )),
-                );
-              }),
-        ),
-      ),
+                        ),
+                      );
+                    }),
+              ),
+            );
+          }),
     );
   }
 }
@@ -409,14 +404,23 @@ class Skelton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.04),
-          borderRadius: BorderRadius.all(Radius.circular(16))),
-    );
+    return StoreConnector<AppState, AppStateViewModel>(
+        converter: (Store<AppState> store) => AppStateViewModel.create(store),
+        builder: (BuildContext context, vm) {
+          return Container(
+            height: height,
+            width: width,
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: vm.isDark
+                  ? Colors.white.withOpacity(0.04)
+                  : Colors.black.withOpacity(0.04),
+              borderRadius: BorderRadius.all(
+                Radius.circular(16),
+              ),
+            ),
+          );
+        });
   }
 }
 
@@ -428,10 +432,17 @@ class NewCardSkelton extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.black.withOpacity(0.04),
-          ),
+          StoreConnector<AppState, AppStateViewModel>(
+              converter: (Store<AppState> store) =>
+                  AppStateViewModel.create(store),
+              builder: (BuildContext context, vm) {
+                return CircleAvatar(
+                  radius: 30,
+                  backgroundColor: vm.isDark
+                      ? Colors.white.withOpacity(0.04)
+                      : Colors.black.withOpacity(0.04),
+                );
+              }),
           Column(
             children: [
               Skelton(
@@ -460,27 +471,185 @@ class LoadingRecentChat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
-        ),
-        child: ListView.separated(
-            itemBuilder: (context, index) => NewCardSkelton(),
-            separatorBuilder: (context, index) => SizedBox(
-                  height: 10,
+    var viewController = ScrollController();
+    return StoreConnector<AppState, AppStateViewModel>(
+        converter: (Store<AppState> store) => AppStateViewModel.create(store),
+        builder: (BuildContext context, vm) {
+          return Container(
+            padding: EdgeInsets.only(top: 10),
+            decoration: BoxDecoration(
+              color: vm.isDark ? Colors.black : Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),
+                topRight: Radius.circular(30.0),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),
+                topRight: Radius.circular(30.0),
+              ),
+              child: ListView.separated(
+                  controller: viewController,
+                  itemBuilder: (context, index) => NewCardSkelton(),
+                  separatorBuilder: (context, index) => SizedBox(
+                        height: 10,
+                      ),
+                  itemCount: 6),
+            ),
+          );
+        });
+  }
+}
+
+class CustomBottomNavigationBar extends StatefulWidget {
+  @override
+  _CustomBottomNavigationBarState createState() =>
+      _CustomBottomNavigationBarState();
+}
+
+class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
+  setPage() {
+    setState(() {
+      pageController.jumpToPage(currentIndex);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 110,
+      child: Material(
+        color: Colors.transparent,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              bottom: 0,
+              child: ClipPath(
+                clipper: WaveClipper(),
+                child: Container(
+                  height: 60,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Theme.of(context).primaryColor.withAlpha(150),
+                        Theme.of(context).primaryColor,
+                      ],
+                    ),
+                  ),
                 ),
-            itemCount: 7),
+              ),
+            ),
+            Positioned(
+              bottom: 45,
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  CustomNavItem(setPage: setPage, icon: Icons.home, id: 0),
+                  Container(),
+                  CustomNavItem(
+                      setPage: setPage, icon: Icons.person_pin_rounded, id: 1),
+                  Container(),
+                  CustomNavItem(setPage: setPage, icon: Icons.settings, id: 2),
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 10,
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text(
+                    'Home',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Container(),
+                  Text(
+                    'Friends',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Container(),
+                  Text(
+                    'Setting',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
+}
+
+class CustomNavItem extends StatelessWidget {
+  final IconData icon;
+  final int id;
+  final Function setPage;
+
+  const CustomNavItem(
+      {required this.setPage, required this.icon, required this.id});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        currentIndex = id;
+        setPage();
+      },
+      child: CircleAvatar(
+        radius: 30,
+        backgroundColor: Theme.of(context).primaryColor,
+        child: CircleAvatar(
+          radius: 25,
+          backgroundColor: currentIndex == id
+              ? Colors.white.withOpacity(0.9)
+              : Colors.transparent,
+          child: Icon(
+            icon,
+            color: currentIndex == id
+                ? Colors.black
+                : Colors.white.withOpacity(0.9),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class WaveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    var sw = size.width;
+    var sh = size.height;
+    path.cubicTo(sw / 12, 0, sw / 12, 2 * sh / 5, 2 * sw / 12, 2 * sh / 5);
+    path.cubicTo(3 * sw / 12, 2 * sh / 5, 3 * sw / 12, 0, 4 * sw / 12, 0);
+    path.cubicTo(
+        5 * sw / 12, 0, 5 * sw / 12, 2 * sh / 5, 6 * sw / 12, 2 * sh / 5);
+    path.cubicTo(7 * sw / 12, 2 * sh / 5, 7 * sw / 12, 0, 8 * sw / 12, 0);
+    path.cubicTo(
+        9 * sw / 12, 0, 9 * sw / 12, 2 * sh / 5, 10 * sw / 12, 2 * sh / 5);
+    path.cubicTo(11 * sw / 12, 2 * sh / 5, 11 * sw / 12, 0, sw, 0);
+    path.lineTo(sw, sh);
+    path.lineTo(0, sh);
+
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

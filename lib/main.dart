@@ -9,6 +9,9 @@ import 'package:redux/redux.dart';
 import 'package:redux_epics/redux_epics.dart';
 import 'config/build_app.dart';
 
+PageController pageController = PageController(initialPage: 0);
+int currentIndex = 0;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {

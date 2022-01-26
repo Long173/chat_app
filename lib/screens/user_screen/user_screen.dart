@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import '../../config/const.dart';
-import '../../config/route.dart';
 
 class UserScreen extends StatefulWidget {
   @override
@@ -27,19 +26,16 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackgroundColor,
       appBar: AppBar(
         title: Text(
           'Me',
-          style: TextStyle(color: Colors.black),
         ),
         elevation: 0,
-        backgroundColor: kAppbarBackground,
         leading: IconButton(
           icon: Icon(CupertinoIcons.back),
-          color: Colors.black,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, Routes.home);
+            // Navigator.pushReplacementNamed(context, Routes.home);
+            Navigator.pop(context);
           },
         ),
       ),

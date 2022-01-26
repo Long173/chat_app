@@ -13,14 +13,25 @@ class _$AppState extends AppState {
   final BuiltList<RecentMessage> recentMess;
   @override
   final AppUser? user;
+  @override
+  final bool isDark;
+  @override
+  final BuiltList<Friend> friend;
 
   factory _$AppState([void Function(AppStateBuilder)? updates]) =>
       (new AppStateBuilder()..update(updates)).build();
 
-  _$AppState._({required this.status, required this.recentMess, this.user})
+  _$AppState._(
+      {required this.status,
+      required this.recentMess,
+      this.user,
+      required this.isDark,
+      required this.friend})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(status, 'AppState', 'status');
     BuiltValueNullFieldError.checkNotNull(recentMess, 'AppState', 'recentMess');
+    BuiltValueNullFieldError.checkNotNull(isDark, 'AppState', 'isDark');
+    BuiltValueNullFieldError.checkNotNull(friend, 'AppState', 'friend');
   }
 
   @override
@@ -36,13 +47,19 @@ class _$AppState extends AppState {
     return other is AppState &&
         status == other.status &&
         recentMess == other.recentMess &&
-        user == other.user;
+        user == other.user &&
+        isDark == other.isDark &&
+        friend == other.friend;
   }
 
   @override
   int get hashCode {
-    return $jf(
-        $jc($jc($jc(0, status.hashCode), recentMess.hashCode), user.hashCode));
+    return $jf($jc(
+        $jc(
+            $jc($jc($jc(0, status.hashCode), recentMess.hashCode),
+                user.hashCode),
+            isDark.hashCode),
+        friend.hashCode));
   }
 
   @override
@@ -50,7 +67,9 @@ class _$AppState extends AppState {
     return (newBuiltValueToStringHelper('AppState')
           ..add('status', status)
           ..add('recentMess', recentMess)
-          ..add('user', user))
+          ..add('user', user)
+          ..add('isDark', isDark)
+          ..add('friend', friend))
         .toString();
   }
 }
@@ -72,6 +91,15 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
   AppUserBuilder get user => _$this._user ??= new AppUserBuilder();
   set user(AppUserBuilder? user) => _$this._user = user;
 
+  bool? _isDark;
+  bool? get isDark => _$this._isDark;
+  set isDark(bool? isDark) => _$this._isDark = isDark;
+
+  ListBuilder<Friend>? _friend;
+  ListBuilder<Friend> get friend =>
+      _$this._friend ??= new ListBuilder<Friend>();
+  set friend(ListBuilder<Friend>? friend) => _$this._friend = friend;
+
   AppStateBuilder() {
     AppState._initializeBuilder(this);
   }
@@ -82,6 +110,8 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
       _status = $v.status;
       _recentMess = $v.recentMess.toBuilder();
       _user = $v.user?.toBuilder();
+      _isDark = $v.isDark;
+      _friend = $v.friend.toBuilder();
       _$v = null;
     }
     return this;
@@ -107,7 +137,10 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
               status: BuiltValueNullFieldError.checkNotNull(
                   status, 'AppState', 'status'),
               recentMess: recentMess.build(),
-              user: _user?.build());
+              user: _user?.build(),
+              isDark: BuiltValueNullFieldError.checkNotNull(
+                  isDark, 'AppState', 'isDark'),
+              friend: friend.build());
     } catch (_) {
       late String _$failedField;
       try {
@@ -115,6 +148,9 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
         recentMess.build();
         _$failedField = 'user';
         _user?.build();
+
+        _$failedField = 'friend';
+        friend.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'AppState', _$failedField, e.toString());

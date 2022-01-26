@@ -33,7 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackgroundColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -103,13 +102,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         validation.passwordValidation(password);
                         vm.dispatch(
                           action: LoginMiddlewareAction.create(
-                              email: email,
-                              password: password,
-                              ),
+                            email: email,
+                            password: password,
+                          ),
                         );
                       },
                       child: CustomButton(
-                        text: 'Log in',
+                        text: 'Log In',
                       ),
                     );
                   },
@@ -122,7 +121,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       'Not register yet? ',
-                      style: TextStyle(color: Colors.black),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -131,7 +129,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: Text(
                         'Register Now',
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(
+                            color: Colors.blueAccent,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],

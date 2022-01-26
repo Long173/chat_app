@@ -1,4 +1,5 @@
 import 'package:app_chat/store/models/app_state.dart';
+import 'package:app_chat/store/models/friend.dart';
 import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/models/user.dart';
 import 'package:built_collection/built_collection.dart';
@@ -16,6 +17,8 @@ abstract class AppStateViewModel
   String get status;
   BuiltList<RecentMessage> get recentMess;
   AppUser? get user;
+  bool get isDark;
+  BuiltList<Friend> get friend;
   Function({required dynamic action}) get dispatch;
 
   AppStateViewModel._();
@@ -29,13 +32,10 @@ abstract class AppStateViewModel
       ..status = store.state.status
       ..recentMess = ListBuilder(store.state.recentMess)
       ..user = store.state.user?.toBuilder()
-      ..dispatch = onDispatch);
+      ..dispatch = onDispatch
+      ..friend = ListBuilder(store.state.friend)
+      ..isDark = store.state.isDark);
   }
   factory AppStateViewModel([void Function(AppStateViewModelBuilder) updates]) =
       _$AppStateViewModel;
 }
-
-//  recentMess: store.state.recentMess,
-//       status: store.state.status,
-//       user: store.state.user,
-//       dispatch: onDispatch,

@@ -3,6 +3,8 @@ import 'package:app_chat/store/models/user.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 
+import 'friend.dart';
+
 part 'app_state.g.dart';
 
 abstract class AbstractAppState {}
@@ -12,11 +14,15 @@ abstract class AppState
   String get status;
   BuiltList<RecentMessage> get recentMess;
   AppUser? get user;
+  bool get isDark;
+  BuiltList<Friend> get friend;
 
   AppState._();
   static void _initializeBuilder(AppStateBuilder builder) {
     builder.status = "idle";
     builder.recentMess = ListBuilder();
+    builder.isDark = false;
+    builder.friend = ListBuilder();
   }
 
   factory AppState([void Function(AppStateBuilder)? updates]) = _$AppState;

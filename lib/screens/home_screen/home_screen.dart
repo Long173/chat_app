@@ -1,16 +1,13 @@
 import 'package:app_chat/repo/repository.dart';
-import 'package:app_chat/store/actions/auth_action.dart';
-import 'package:app_chat/store/actions/recent_mess_action.dart';
-import 'package:app_chat/store/models/app_state.dart';
-import 'package:app_chat/store/view_model/app_state_view_model.dart';
+import 'package:app_chat/screens/home_screen/bottom_navbar/friend_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:redux/redux.dart';
-import '../../config/const.dart';
 import '../../config/keys.dart';
 import '../../config/route.dart';
+import '../../main.dart';
+import 'bottom_navbar/home_page.dart';
+import 'bottom_navbar/setting_page.dart';
 import 'home_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,17 +21,19 @@ class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   Repository repository = Repository();
-  List _listFriend = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var _index = 0;
     return user == null
         ? Center(
             child: CircularProgressIndicator(),
           )
         : Scaffold(
-            backgroundColor: kBackgroundColor,
             appBar: AppBar(
               leading: Padding(
                 padding: const EdgeInsets.only(left: 20),
@@ -45,11 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              backgroundColor: kAppbarBackground,
               centerTitle: true,
               title: Text(
                 user!.email!,
-                style: TextStyle(color: Colors.black),
               ),
               actions: [
                 IconButton(
@@ -59,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   icon: Icon(
                     Icons.person,
-                    color: Colors.black,
                   ),
                 ),
                 IconButton(
@@ -72,84 +68,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   icon: Icon(
                     Icons.exit_to_app,
-                    color: Colors.black,
                   ),
                 ),
               ],
             ),
-            body: Column(
+            extendBody: true,
+            body: PageView(
+              controller: pageController,
+              physics: NeverScrollableScrollPhysics(),
               children: [
-                FutureBuilder(
-                  future: repository
-                      .getListFriend(user!)
-                      .then((value) => _listFriend.addAll(value)),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<void> snapshot) {
-                    return FavoriteContacts(
-                      listFriend: _listFriend,
-                    );
-                  },
+                HomePage(
+                  repository: repository,
+                  user: user,
                 ),
-                StoreConnector<AppState, AppStateViewModel>(
-                  distinct: true,
-                  converter: (Store<AppState> store) =>
-                      AppStateViewModel.create(store),
-                  onInitialBuild: (viewModel) {
-                    viewModel.dispatch(
-                        action:
-                            RencentChatMiddlewareAction.create(newUser: user!));
-                  },
-                  builder: (BuildContext context, vm) {
-                    final recent = vm.recentMess;
-                    final status = vm.status;
-                    if (vm.user == null) {
-                      vm.dispatch(
-                          action: VerifyUserMiddlewareAction.create(
-                              newUser: user!));
-                    }
-                    return Container(
-                      child: status == 'idle'
-                          ? RecentChats(
-                              lenghtChat: recent.length,
-                              recent: recent.toList(),
-                              user: user!)
-                          : Expanded(
-                              flex: 4,
-                              child: LoadingRecentChat(),
-                            ),
-                    );
-                  },
+                FriendPage(
+                  repository: repository,
+                  user: user!,
                 ),
+                SettingPage(),
               ],
             ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _index,
-              type: BottomNavigationBarType.fixed,
-              items: [
-                BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.home,
-                    ),
-                    label: 'Home'),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.people),
-                  label: 'Channels',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.contacts),
-                  label: 'Contact',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.expand_more),
-                  label: 'More',
-                ),
-              ],
-              onTap: (index) {
-                setState(() {
-                  _index = index;
-                });
-              },
-            ),
+            bottomNavigationBar: CustomBottomNavigationBar(),
           );
   }
 }

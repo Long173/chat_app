@@ -28,10 +28,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: kBackgroundColor,
         leading: BackButtonAppBar(
           navigatorKey: RegisterScreen._navigatorKey,
         ),

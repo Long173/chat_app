@@ -14,6 +14,10 @@ class _$AppStateViewModel extends AppStateViewModel {
   @override
   final AppUser? user;
   @override
+  final bool isDark;
+  @override
+  final BuiltList<Friend> friend;
+  @override
   final Function({required dynamic action}) dispatch;
 
   factory _$AppStateViewModel(
@@ -24,12 +28,18 @@ class _$AppStateViewModel extends AppStateViewModel {
       {required this.status,
       required this.recentMess,
       this.user,
+      required this.isDark,
+      required this.friend,
       required this.dispatch})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         status, 'AppStateViewModel', 'status');
     BuiltValueNullFieldError.checkNotNull(
         recentMess, 'AppStateViewModel', 'recentMess');
+    BuiltValueNullFieldError.checkNotNull(
+        isDark, 'AppStateViewModel', 'isDark');
+    BuiltValueNullFieldError.checkNotNull(
+        friend, 'AppStateViewModel', 'friend');
     BuiltValueNullFieldError.checkNotNull(
         dispatch, 'AppStateViewModel', 'dispatch');
   }
@@ -50,13 +60,20 @@ class _$AppStateViewModel extends AppStateViewModel {
         status == other.status &&
         recentMess == other.recentMess &&
         user == other.user &&
+        isDark == other.isDark &&
+        friend == other.friend &&
         dispatch == _$dynamicOther.dispatch;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, status.hashCode), recentMess.hashCode), user.hashCode),
+        $jc(
+            $jc(
+                $jc($jc($jc(0, status.hashCode), recentMess.hashCode),
+                    user.hashCode),
+                isDark.hashCode),
+            friend.hashCode),
         dispatch.hashCode));
   }
 
@@ -66,6 +83,8 @@ class _$AppStateViewModel extends AppStateViewModel {
           ..add('status', status)
           ..add('recentMess', recentMess)
           ..add('user', user)
+          ..add('isDark', isDark)
+          ..add('friend', friend)
           ..add('dispatch', dispatch))
         .toString();
   }
@@ -89,6 +108,15 @@ class AppStateViewModelBuilder
   AppUserBuilder get user => _$this._user ??= new AppUserBuilder();
   set user(AppUserBuilder? user) => _$this._user = user;
 
+  bool? _isDark;
+  bool? get isDark => _$this._isDark;
+  set isDark(bool? isDark) => _$this._isDark = isDark;
+
+  ListBuilder<Friend>? _friend;
+  ListBuilder<Friend> get friend =>
+      _$this._friend ??= new ListBuilder<Friend>();
+  set friend(ListBuilder<Friend>? friend) => _$this._friend = friend;
+
   Function({required dynamic action})? _dispatch;
   Function({required dynamic action})? get dispatch => _$this._dispatch;
   set dispatch(Function({required dynamic action})? dispatch) =>
@@ -102,6 +130,8 @@ class AppStateViewModelBuilder
       _status = $v.status;
       _recentMess = $v.recentMess.toBuilder();
       _user = $v.user?.toBuilder();
+      _isDark = $v.isDark;
+      _friend = $v.friend.toBuilder();
       _dispatch = $v.dispatch;
       _$v = null;
     }
@@ -129,6 +159,9 @@ class AppStateViewModelBuilder
                   status, 'AppStateViewModel', 'status'),
               recentMess: recentMess.build(),
               user: _user?.build(),
+              isDark: BuiltValueNullFieldError.checkNotNull(
+                  isDark, 'AppStateViewModel', 'isDark'),
+              friend: friend.build(),
               dispatch: BuiltValueNullFieldError.checkNotNull(
                   dispatch, 'AppStateViewModel', 'dispatch'));
     } catch (_) {
@@ -138,6 +171,9 @@ class AppStateViewModelBuilder
         recentMess.build();
         _$failedField = 'user';
         _user?.build();
+
+        _$failedField = 'friend';
+        friend.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'AppStateViewModel', _$failedField, e.toString());

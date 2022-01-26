@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:app_chat/store/models/friend.dart';
 import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/models/user.dart';
 import 'package:built_collection/built_collection.dart';
@@ -12,7 +13,7 @@ import 'package:intl/intl.dart';
 
 abstract class AbstractRepository {
   Future<AppUser> infoUser(User user);
-  Future<List> getListFriend(User user);
+  Future<BuiltList<Friend>> getListFriend(User user);
   Future<BuiltList<RecentMessage>> getRecentFriend(User user);
   Future getAvatar(String name);
   Future<File?> getImage();
@@ -20,11 +21,21 @@ abstract class AbstractRepository {
   Future uploadUserAva(image, AppUser user);
   Future sendMess(String message, String sender, String receiver, String type,
       Timestamp timeSend, bool seen);
+  Future queryData(String queryString, User user);
 }
 
 class Repository implements AbstractRepository {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  @override
+  Future queryData(String queryString, User user) {
+    return firebase
+        .collection('users')
+        .where('email',
+            isGreaterThanOrEqualTo: queryString, isNotEqualTo: user.email)
+        .get();
+  }
 
   @override
   Future<AppUser> infoUser(User user) async {
@@ -40,13 +51,17 @@ class Repository implements AbstractRepository {
   }
 
   @override
-  Future<List> getListFriend(User user) async {
-    List list = [];
-    final result = firebase.collection('messages');
+  Future<BuiltList<Friend>> getListFriend(User user) async {
+    var list = BuiltList<Friend>([]);
+    final result = firebase.collection('users');
     await result.get().then((snapshot) {
       snapshot.docs.forEach((doc) {
         if (doc.id != user.email) {
-          list.add(doc.id);
+          var friend = new Friend((b) => b
+            ..avatar = doc['image']
+            ..name = doc['name']
+            ..email = doc['email']);
+          list = list.rebuild((p0) => p0..add(friend));
         }
       });
     });
@@ -163,9 +178,3 @@ class Repository implements AbstractRepository {
     }
   }
 }
-
-// scrollController.animateTo(
-//         scrollController.position.maxScrollExtent,
-//         curve: Curves.easeOut,
-//         duration: const Duration(milliseconds: 300),
-//       );

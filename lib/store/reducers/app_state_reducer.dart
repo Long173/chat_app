@@ -1,4 +1,6 @@
 import 'package:app_chat/store/actions/auth_action.dart';
+import 'package:app_chat/store/actions/change_theme_action.dart';
+import 'package:app_chat/store/actions/list_friend_action.dart';
 import 'package:app_chat/store/actions/update_user_info.dart';
 import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/actions/status_reducer_action.dart';
@@ -11,6 +13,8 @@ final Reducer<AppState> appStateReducer = combineReducers<AppState>([
   TypedReducer<AppState, RencentChatReducerAction>(reducerChangeRecentMess),
   TypedReducer<AppState, LoginReducerAction>(reducerReducerLogin),
   TypedReducer<AppState, UpdateUserInfoReducerAction>(updateUserInfo),
+  TypedReducer<AppState, ChangeThemeReducerAction>(changeTheme),
+  TypedReducer<AppState, ListFriendReducerAction>(getListFriend),
 ]);
 
 AppState reducerChangeStatus(AppState state, StatusReducerAction action) {
@@ -28,4 +32,12 @@ AppState reducerReducerLogin(AppState state, LoginReducerAction action) {
 
 AppState updateUserInfo(AppState state, UpdateUserInfoReducerAction action) {
   return state.rebuild((a) => a..user.image = action.image);
+}
+
+AppState changeTheme(AppState state, ChangeThemeReducerAction action) {
+  return state.rebuild((p0) => p0..isDark = action.isDark);
+}
+
+AppState getListFriend(AppState state, ListFriendReducerAction action) {
+  return state.rebuild((p0) => p0..friend = ListBuilder(action.listFriend));
 }

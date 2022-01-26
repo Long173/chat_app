@@ -1,5 +1,7 @@
 import 'package:app_chat/repo/repository.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
+import 'package:app_chat/store/actions/change_theme_action.dart';
+import 'package:app_chat/store/actions/list_friend_action.dart';
 import 'package:app_chat/store/actions/message_action.dart';
 import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/actions/register_action.dart';
@@ -35,6 +37,8 @@ class AppMiddleware implements EpicClass<AppState> {
       authFirebase,
       register,
       updateUserInfo,
+      changeTheme,
+      getFriendList,
     ])(actions, store);
   }
 
@@ -63,6 +67,23 @@ class AppMiddleware implements EpicClass<AppState> {
           yield StatusReducerAction.create(status: "isLoading");
           yield repository.sendMess(action.message, action.sender,
               action.receiver, action.type, action.timeSend, action.seen);
+        } catch (e) {
+          Fluttertoast.showToast(msg: e.toString());
+        } finally {
+          yield StatusReducerAction.create(status: "idle");
+        }
+      }
+    }
+  }
+
+  Stream<dynamic> getFriendList(
+      Stream<dynamic> actions, EpicStore<AppState> store) async* {
+    await for (final action in actions) {
+      if (action is ListFriendMiddlewareAction) {
+        try {
+          yield StatusReducerAction.create(status: "isLoading");
+          final list = await repository.getListFriend(action.user);
+          yield ListFriendReducerAction.create(listFriend: list);
         } catch (e) {
           Fluttertoast.showToast(msg: e.toString());
         } finally {
@@ -181,6 +202,24 @@ class AppMiddleware implements EpicClass<AppState> {
           }
         } catch (e) {
           progressDialog.dismiss();
+          Fluttertoast.showToast(msg: 'Something went wrong');
+        } finally {
+          yield StatusReducerAction.create(status: "idle");
+        }
+      }
+    }
+  }
+
+  Stream<dynamic> changeTheme(
+    Stream<dynamic> actions,
+    EpicStore<AppState> store,
+  ) async* {
+    await for (final action in actions) {
+      if (action is ChangeThemeMiddlewareAction) {
+        try {
+          yield StatusReducerAction.create(status: "isLoading");
+          yield ChangeThemeReducerAction.create(isDark: action.isDark);
+        } catch (e) {
           Fluttertoast.showToast(msg: 'Something went wrong');
         } finally {
           yield StatusReducerAction.create(status: "idle");
