@@ -1,3 +1,4 @@
+import 'package:app_chat/config/build_app.dart';
 import 'package:app_chat/repo/repository.dart';
 import 'package:app_chat/screens/home_screen/bottom_navbar/friend_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../config/keys.dart';
 import '../../config/route.dart';
-import '../../main.dart';
 import 'bottom_navbar/home_page.dart';
 import 'bottom_navbar/setting_page.dart';
 import 'home_widgets.dart';
@@ -22,10 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   Repository repository = Repository();
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

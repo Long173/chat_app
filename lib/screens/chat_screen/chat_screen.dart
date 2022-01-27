@@ -38,7 +38,6 @@ class _ChatScreenState extends State<ChatScreen> {
               leading: IconButton(
                 icon: Icon(CupertinoIcons.back),
                 onPressed: () {
-                  // Navigator.pushReplacementNamed(context, Routes.home);
                   vm.dispatch(
                       action:
                           RencentChatMiddlewareAction.create(newUser: user!));

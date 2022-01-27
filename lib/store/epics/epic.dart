@@ -1,3 +1,4 @@
+import 'package:app_chat/config/build_app.dart';
 import 'package:app_chat/repo/repository.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/actions/change_theme_action.dart';
@@ -152,7 +153,9 @@ class AppMiddleware implements EpicClass<AppState> {
         try {
           yield StatusReducerAction.create(status: "isLoading");
           FirebaseAuth.instance.signOut();
-          _navigatorKey.currentState!.pushReplacementNamed(Routes.login);
+          currentIndex = 0;
+          _navigatorKey.currentState!
+              .pushNamedAndRemoveUntil(Routes.login, (route) => false);
         } catch (e) {
           Fluttertoast.showToast(msg: e.toString());
         } finally {

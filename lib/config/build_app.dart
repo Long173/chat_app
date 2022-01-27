@@ -14,6 +14,9 @@ import 'package:redux/redux.dart';
 
 import 'keys.dart';
 
+PageController pageController = PageController(initialPage: 0);
+int currentIndex = 0;
+
 class ChatApp extends StatelessWidget {
   const ChatApp({Key? key, required this.store}) : super(key: key);
   final Store<AppState> store;

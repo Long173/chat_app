@@ -21,15 +21,17 @@ abstract class AbstractRepository {
   Future uploadUserAva(image, AppUser user);
   Future sendMess(String message, String sender, String receiver, String type,
       Timestamp timeSend, bool seen);
-  Future queryData(String queryString, User user);
+  queryData(String queryString, User user);
 }
 
 class Repository implements AbstractRepository {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
 
+
+
   @override
-  Future queryData(String queryString, User user) {
+  queryData(String queryString, User user) async {
     return firebase
         .collection('users')
         .where('email',

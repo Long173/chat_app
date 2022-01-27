@@ -1,5 +1,6 @@
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/view_model/app_state_view_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -127,21 +128,30 @@ class MessageScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                     elevation: 6,
                     child: Container(
-                      constraints: BoxConstraints(maxWidth: 250),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      child: type == 'text'
-                          ? Text(
-                              text,
-                              style: TextStyle(
-                                color: me ? Colors.white : Colors.black,
-                              ),
-                            )
-                          : Image.network(
-                              text,
-                              height: 250,
-                            ),
-                    ),
+                        constraints: BoxConstraints(maxWidth: 250),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                        child: type == 'text'
+                            ? Text(
+                                text,
+                                style: TextStyle(
+                                  color: me ? Colors.white : Colors.black,
+                                ),
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: text,
+                                height: 250,
+                                placeholder: (context, url) => Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: Colors.black12,
+                                  child: Icon(
+                                    Icons.error,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              )),
                   ),
                   SizedBox(
                     width: 10,

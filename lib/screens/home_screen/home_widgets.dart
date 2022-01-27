@@ -1,16 +1,16 @@
+import 'package:app_chat/config/build_app.dart';
 import 'package:app_chat/screens/chat_screen/chat_screen.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/view_model/app_state_view_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
-
-import '../../main.dart';
 
 class ConfirmNotiWidget extends StatelessWidget {
   const ConfirmNotiWidget({
@@ -70,9 +70,13 @@ class MessageCard extends StatelessWidget {
     return Container(
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(avt),
-            radius: 30,
+          ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: avt,
+              fit: BoxFit.cover,
+              height: 65,
+              width: 65,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -82,9 +86,7 @@ class MessageCard extends StatelessWidget {
                 Text(
                   sender,
                   style: TextStyle(
-                      fontSize: 20,
-                      color: seen ? Colors.grey.shade700 : Colors.black,
-                      fontWeight: seen ? null : FontWeight.bold),
+                      fontSize: 20, fontWeight: seen ? null : FontWeight.bold),
                 ),
                 Row(
                   children: [
@@ -101,8 +103,6 @@ class MessageCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: 16,
-                                color:
-                                    seen ? Colors.grey.shade600 : Colors.black,
                                 fontWeight: seen ? null : FontWeight.bold),
                           ),
                     SizedBox(
@@ -112,7 +112,6 @@ class MessageCard extends StatelessWidget {
                       '•$timeSend',
                       style: TextStyle(
                           fontSize: 16,
-                          color: seen ? Colors.grey.shade600 : Colors.black,
                           fontWeight: seen ? null : FontWeight.bold),
                     )
                   ],
@@ -275,10 +274,13 @@ class _FriendContactState extends State<FriendContact> {
                     padding: EdgeInsets.all(10.0),
                     child: Column(
                       children: <Widget>[
-                        CircleAvatar(
-                          radius: 35.0,
-                          backgroundImage:
-                              NetworkImage(widget.listFriend[index].avatar),
+                        ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: widget.listFriend[index].avatar,
+                            height: 65,
+                            width: 65,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                         SizedBox(height: 6.0),
                         Text(
@@ -511,7 +513,8 @@ class CustomBottomNavigationBar extends StatefulWidget {
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   setPage() {
     setState(() {
-      pageController.jumpToPage(currentIndex);
+      pageController.animateToPage(currentIndex,
+          duration: Duration(milliseconds: 250), curve: Curves.bounceInOut);
     });
   }
 

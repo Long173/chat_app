@@ -3,6 +3,7 @@ import 'package:app_chat/repo/repository.dart';
 import 'package:app_chat/store/actions/update_user_info.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/view_model/app_state_view_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,7 +35,6 @@ class _UserScreenState extends State<UserScreen> {
         leading: IconButton(
           icon: Icon(CupertinoIcons.back),
           onPressed: () {
-            // Navigator.pushReplacementNamed(context, Routes.home);
             Navigator.pop(context);
           },
         ),
@@ -60,7 +60,16 @@ class _UserScreenState extends State<UserScreen> {
                                     _image!,
                                     fit: BoxFit.fill,
                                   )
-                                : Image.network('${user!.image}'),
+                                : CachedNetworkImage(
+                                    imageUrl: user!.image,
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    errorWidget: (context,url,error)=> Container(
+                                      color: Colors.black12,
+                                      child: Icon(Icons.error,color: Colors.red,),
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
