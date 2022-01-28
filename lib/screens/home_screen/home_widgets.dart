@@ -318,7 +318,6 @@ class RecentChats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var recentController = ScrollController();
-    var _firestore = FirebaseFirestore.instance;
     return Expanded(
       child: StoreConnector<AppState, AppStateViewModel>(
           converter: (Store<AppState> store) => AppStateViewModel.create(store),
@@ -344,31 +343,7 @@ class RecentChats extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 20),
                         child: GestureDetector(
-                          onTap: () async {
-                            if (recent![index].seen == false) {
-                              var data = {};
-                              data['body'] = recent![index].body;
-                              data['from'] = recent![index].sender;
-                              data['seen'] = recent![index].seen;
-                              data['timeSend'] = recent![index].realTime;
-                              data['to'] = user.email;
-                              data['type'] = recent![index].type;
-                              var sender =
-                                  recent![index].sender.replaceAll('.', '_');
-                              await _firestore
-                                  .collection("messages")
-                                  .doc(user.email)
-                                  .update({
-                                sender: FieldValue.arrayRemove([data]),
-                              });
-                              data['seen'] = !recent![index].seen;
-                              await _firestore
-                                  .collection("messages")
-                                  .doc(user.email)
-                                  .set({
-                                sender: FieldValue.arrayUnion([data]),
-                              }, SetOptions(merge: true));
-                            }
+                          onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(

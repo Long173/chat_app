@@ -23,62 +23,52 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        StoreConnector<AppState, AppStateViewModel>(
+    return Container(
+      child: Column(
+        children: [
+          StoreConnector<AppState, AppStateViewModel>(
+              distinct: true,
+              converter: (Store<AppState> store) =>
+                  AppStateViewModel.create(store),
+              onInitialBuild: (viewModel) {
+                viewModel.dispatch(
+                    action: ListFriendMiddlewareAction.create(newUser: user!));
+              },
+              builder: (BuildContext context, vm) {
+                return FriendContact(
+                  listFriend: vm.friend.toList(),
+                );
+              }),
+          StoreConnector<AppState, AppStateViewModel>(
             distinct: true,
             converter: (Store<AppState> store) =>
                 AppStateViewModel.create(store),
             onInitialBuild: (viewModel) {
               viewModel.dispatch(
-                  action: ListFriendMiddlewareAction.create(newUser: user!));
+                  action: RencentChatMiddlewareAction.create(newUser: user!));
             },
             builder: (BuildContext context, vm) {
-
-              return FriendContact(
-                listFriend: vm.friend.toList(),
+              final recent = vm.recentMess;
+              final status = vm.status;
+              if (vm.user == null) {
+                vm.dispatch(
+                    action: VerifyUserMiddlewareAction.create(newUser: user!));
+              }
+              return Container(
+                child: status == 'idle'
+                    ? RecentChats(
+                        lenghtChat: recent.length,
+                        recent: recent.toList(),
+                        user: user!)
+                    : Expanded(
+                        flex: 4,
+                        child: LoadingRecentChat(),
+                      ),
               );
-            }),
-        StoreConnector<AppState, AppStateViewModel>(
-          distinct: true,
-          converter: (Store<AppState> store) => AppStateViewModel.create(store),
-          onInitialBuild: (viewModel) {
-            viewModel.dispatch(
-                action: RencentChatMiddlewareAction.create(newUser: user!));
-          },
-          builder: (BuildContext context, vm) {
-            final recent = vm.recentMess;
-            final status = vm.status;
-            if (vm.user == null) {
-              vm.dispatch(
-                  action: VerifyUserMiddlewareAction.create(newUser: user!));
-            }
-            return Container(
-              child: status == 'idle'
-                  ? RecentChats(
-                      lenghtChat: recent.length,
-                      recent: recent.toList(),
-                      user: user!)
-                  : Expanded(
-                      flex: 4,
-                      child: LoadingRecentChat(),
-                    ),
-            );
-          },
-        ),
-      ],
+            },
+          ),
+        ],
+      ),
     );
   }
 }
-
-
-// FutureBuilder(
-//           future: repository
-//               .getListFriend(user!)
-//               .then((value) => _listFriend = value),
-//           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-//             return FavoriteContacts(
-//               listFriend: _listFriend,
-//             );
-//           },
-//         ),

@@ -48,7 +48,32 @@ class _BuildChatScreenState extends State<BuildChatScreen> {
             for (var i in data.keys) {
               if (i == friend) {
                 for (var texts in data[i]) {
-                  list.add(texts);
+                  if (texts['seen'] == false) {
+                    var data = {};
+                    data['body'] = texts['body'];
+                    data['from'] = texts['from'];
+                    data['seen'] = texts['seen'];
+                    data['timeSend'] = texts['timeSend'];
+                    data['to'] = widget.user!.email;
+                    data['type'] = texts['type'];
+                    var sender = texts['from'].replaceAll('.', '_');
+                    _firestore
+                        .collection("messages")
+                        .doc(widget.user!.email)
+                        .update({
+                      sender: FieldValue.arrayRemove([data]),
+                    });
+                    data['seen'] = !texts['seen'];
+                    _firestore
+                        .collection("messages")
+                        .doc(widget.user!.email)
+                        .set({
+                      sender: FieldValue.arrayUnion([data]),
+                    }, SetOptions(merge: true));
+                    list.add(data);
+                  } else {
+                    list.add(texts);
+                  }
                 }
               }
             }

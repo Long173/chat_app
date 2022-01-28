@@ -5,6 +5,7 @@ class MyThemes {
   static final darkTheme = ThemeData(
     scaffoldBackgroundColor: Colors.grey.shade900,
     colorScheme: ColorScheme.dark(),
+    primaryColorLight: Colors.black45,
   );
 
   static final lightTheme = ThemeData(

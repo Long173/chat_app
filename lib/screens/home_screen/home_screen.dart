@@ -22,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   Repository repository = Repository();
 
-
   @override
   Widget build(BuildContext context) {
     return user == null
@@ -31,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         : Scaffold(
             appBar: AppBar(
+              backgroundColor: Theme.of(context).primaryColor,
               leading: Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: Hero(

@@ -28,10 +28,11 @@ class _UserScreenState extends State<UserScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text(
           'Me',
         ),
-        elevation: 0,
+        elevation: 0.5,
         leading: IconButton(
           icon: Icon(CupertinoIcons.back),
           onPressed: () {
@@ -65,9 +66,13 @@ class _UserScreenState extends State<UserScreen> {
                                     placeholder: (context, url) => Center(
                                       child: CircularProgressIndicator(),
                                     ),
-                                    errorWidget: (context,url,error)=> Container(
+                                    errorWidget: (context, url, error) =>
+                                        Container(
                                       color: Colors.black12,
-                                      child: Icon(Icons.error,color: Colors.red,),
+                                      child: Icon(
+                                        Icons.error,
+                                        color: Colors.red,
+                                      ),
                                     ),
                                   ),
                           ),

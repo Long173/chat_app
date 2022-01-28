@@ -34,7 +34,8 @@ class _ChatScreenState extends State<ChatScreen> {
         builder: (BuildContext context, vm) {
           return Scaffold(
             appBar: AppBar(
-              elevation: 0,
+              backgroundColor: Theme.of(context).primaryColor,
+              elevation: 0.5,
               leading: IconButton(
                 icon: Icon(CupertinoIcons.back),
                 onPressed: () {
