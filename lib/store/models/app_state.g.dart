@@ -17,6 +17,8 @@ class _$AppState extends AppState {
   final bool isDark;
   @override
   final BuiltList<Friend> friend;
+  @override
+  final int page;
 
   factory _$AppState([void Function(AppStateBuilder)? updates]) =>
       (new AppStateBuilder()..update(updates)).build();
@@ -26,12 +28,14 @@ class _$AppState extends AppState {
       required this.recentMess,
       this.user,
       required this.isDark,
-      required this.friend})
+      required this.friend,
+      required this.page})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(status, 'AppState', 'status');
     BuiltValueNullFieldError.checkNotNull(recentMess, 'AppState', 'recentMess');
     BuiltValueNullFieldError.checkNotNull(isDark, 'AppState', 'isDark');
     BuiltValueNullFieldError.checkNotNull(friend, 'AppState', 'friend');
+    BuiltValueNullFieldError.checkNotNull(page, 'AppState', 'page');
   }
 
   @override
@@ -49,17 +53,20 @@ class _$AppState extends AppState {
         recentMess == other.recentMess &&
         user == other.user &&
         isDark == other.isDark &&
-        friend == other.friend;
+        friend == other.friend &&
+        page == other.page;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
         $jc(
-            $jc($jc($jc(0, status.hashCode), recentMess.hashCode),
-                user.hashCode),
-            isDark.hashCode),
-        friend.hashCode));
+            $jc(
+                $jc($jc($jc(0, status.hashCode), recentMess.hashCode),
+                    user.hashCode),
+                isDark.hashCode),
+            friend.hashCode),
+        page.hashCode));
   }
 
   @override
@@ -69,7 +76,8 @@ class _$AppState extends AppState {
           ..add('recentMess', recentMess)
           ..add('user', user)
           ..add('isDark', isDark)
-          ..add('friend', friend))
+          ..add('friend', friend)
+          ..add('page', page))
         .toString();
   }
 }
@@ -100,6 +108,10 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
       _$this._friend ??= new ListBuilder<Friend>();
   set friend(ListBuilder<Friend>? friend) => _$this._friend = friend;
 
+  int? _page;
+  int? get page => _$this._page;
+  set page(int? page) => _$this._page = page;
+
   AppStateBuilder() {
     AppState._initializeBuilder(this);
   }
@@ -112,6 +124,7 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
       _user = $v.user?.toBuilder();
       _isDark = $v.isDark;
       _friend = $v.friend.toBuilder();
+      _page = $v.page;
       _$v = null;
     }
     return this;
@@ -140,7 +153,9 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
               user: _user?.build(),
               isDark: BuiltValueNullFieldError.checkNotNull(
                   isDark, 'AppState', 'isDark'),
-              friend: friend.build());
+              friend: friend.build(),
+              page: BuiltValueNullFieldError.checkNotNull(
+                  page, 'AppState', 'page'));
     } catch (_) {
       late String _$failedField;
       try {

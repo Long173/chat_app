@@ -1,6 +1,7 @@
 import 'package:app_chat/config/build_app.dart';
 import 'package:app_chat/repo/repository.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
+import 'package:app_chat/store/actions/change_page_action.dart';
 import 'package:app_chat/store/actions/change_theme_action.dart';
 import 'package:app_chat/store/actions/list_friend_action.dart';
 import 'package:app_chat/store/actions/message_action.dart';
@@ -40,6 +41,7 @@ class AppMiddleware implements EpicClass<AppState> {
       updateUserInfo,
       changeTheme,
       getFriendList,
+      changePage,
     ])(actions, store);
   }
 
@@ -110,6 +112,24 @@ class AppMiddleware implements EpicClass<AppState> {
     }
   }
 
+  Stream<dynamic> changePage(
+      Stream<dynamic> actions, EpicStore<AppState> store) async* {
+    await for (final action in actions) {
+      if (action is ChangePageMiddlewareAction) {
+        try {
+          yield StatusReducerAction.create(status: "isLoading");
+          yield ChangePageReducerAction.create(newPage: action.goToPage);
+          pageController.animateToPage(action.goToPage,
+              duration: Duration(milliseconds: 250), curve: Curves.bounceInOut);
+        } catch (e) {
+          Fluttertoast.showToast(msg: e.toString());
+        } finally {
+          yield StatusReducerAction.create(status: "idle");
+        }
+      }
+    }
+  }
+
   Stream<dynamic> authFirebase(
     Stream<dynamic> actions,
     EpicStore<AppState> store,
@@ -153,7 +173,7 @@ class AppMiddleware implements EpicClass<AppState> {
         try {
           yield StatusReducerAction.create(status: "isLoading");
           FirebaseAuth.instance.signOut();
-          currentIndex = 0;
+          yield ChangePageReducerAction.create(newPage: 0);
           _navigatorKey.currentState!
               .pushNamedAndRemoveUntil(Routes.login, (route) => false);
         } catch (e) {

@@ -18,6 +18,8 @@ class _$AppStateViewModel extends AppStateViewModel {
   @override
   final BuiltList<Friend> friend;
   @override
+  final int page;
+  @override
   final Function({required dynamic action}) dispatch;
 
   factory _$AppStateViewModel(
@@ -30,6 +32,7 @@ class _$AppStateViewModel extends AppStateViewModel {
       this.user,
       required this.isDark,
       required this.friend,
+      required this.page,
       required this.dispatch})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
@@ -40,6 +43,7 @@ class _$AppStateViewModel extends AppStateViewModel {
         isDark, 'AppStateViewModel', 'isDark');
     BuiltValueNullFieldError.checkNotNull(
         friend, 'AppStateViewModel', 'friend');
+    BuiltValueNullFieldError.checkNotNull(page, 'AppStateViewModel', 'page');
     BuiltValueNullFieldError.checkNotNull(
         dispatch, 'AppStateViewModel', 'dispatch');
   }
@@ -62,6 +66,7 @@ class _$AppStateViewModel extends AppStateViewModel {
         user == other.user &&
         isDark == other.isDark &&
         friend == other.friend &&
+        page == other.page &&
         dispatch == _$dynamicOther.dispatch;
   }
 
@@ -70,10 +75,12 @@ class _$AppStateViewModel extends AppStateViewModel {
     return $jf($jc(
         $jc(
             $jc(
-                $jc($jc($jc(0, status.hashCode), recentMess.hashCode),
-                    user.hashCode),
-                isDark.hashCode),
-            friend.hashCode),
+                $jc(
+                    $jc($jc($jc(0, status.hashCode), recentMess.hashCode),
+                        user.hashCode),
+                    isDark.hashCode),
+                friend.hashCode),
+            page.hashCode),
         dispatch.hashCode));
   }
 
@@ -85,6 +92,7 @@ class _$AppStateViewModel extends AppStateViewModel {
           ..add('user', user)
           ..add('isDark', isDark)
           ..add('friend', friend)
+          ..add('page', page)
           ..add('dispatch', dispatch))
         .toString();
   }
@@ -117,6 +125,10 @@ class AppStateViewModelBuilder
       _$this._friend ??= new ListBuilder<Friend>();
   set friend(ListBuilder<Friend>? friend) => _$this._friend = friend;
 
+  int? _page;
+  int? get page => _$this._page;
+  set page(int? page) => _$this._page = page;
+
   Function({required dynamic action})? _dispatch;
   Function({required dynamic action})? get dispatch => _$this._dispatch;
   set dispatch(Function({required dynamic action})? dispatch) =>
@@ -132,6 +144,7 @@ class AppStateViewModelBuilder
       _user = $v.user?.toBuilder();
       _isDark = $v.isDark;
       _friend = $v.friend.toBuilder();
+      _page = $v.page;
       _dispatch = $v.dispatch;
       _$v = null;
     }
@@ -162,6 +175,8 @@ class AppStateViewModelBuilder
               isDark: BuiltValueNullFieldError.checkNotNull(
                   isDark, 'AppStateViewModel', 'isDark'),
               friend: friend.build(),
+              page: BuiltValueNullFieldError.checkNotNull(
+                  page, 'AppStateViewModel', 'page'),
               dispatch: BuiltValueNullFieldError.checkNotNull(
                   dispatch, 'AppStateViewModel', 'dispatch'));
     } catch (_) {

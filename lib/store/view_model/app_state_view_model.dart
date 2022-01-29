@@ -19,6 +19,8 @@ abstract class AppStateViewModel
   AppUser? get user;
   bool get isDark;
   BuiltList<Friend> get friend;
+  int get page;
+  
   Function({required dynamic action}) get dispatch;
 
   AppStateViewModel._();
@@ -34,7 +36,8 @@ abstract class AppStateViewModel
       ..user = store.state.user?.toBuilder()
       ..dispatch = onDispatch
       ..friend = ListBuilder(store.state.friend)
-      ..isDark = store.state.isDark);
+      ..isDark = store.state.isDark
+      ..page = store.state.page);
   }
   factory AppStateViewModel([void Function(AppStateViewModelBuilder) updates]) =
       _$AppStateViewModel;

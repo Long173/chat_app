@@ -16,6 +16,7 @@ abstract class AppState
   AppUser? get user;
   bool get isDark;
   BuiltList<Friend> get friend;
+  int get page;
 
   AppState._();
   static void _initializeBuilder(AppStateBuilder builder) {
@@ -23,6 +24,7 @@ abstract class AppState
     builder.recentMess = ListBuilder();
     builder.isDark = false;
     builder.friend = ListBuilder();
+    builder.page = 0;
   }
 
   factory AppState([void Function(AppStateBuilder)? updates]) = _$AppState;

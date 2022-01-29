@@ -1,6 +1,6 @@
-import 'package:app_chat/config/build_app.dart';
 import 'package:app_chat/screens/chat_screen/chat_screen.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
+import 'package:app_chat/store/actions/change_page_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/view_model/app_state_view_model.dart';
@@ -479,20 +479,7 @@ class LoadingRecentChat extends StatelessWidget {
   }
 }
 
-class CustomBottomNavigationBar extends StatefulWidget {
-  @override
-  _CustomBottomNavigationBarState createState() =>
-      _CustomBottomNavigationBarState();
-}
-
-class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  setPage() {
-    setState(() {
-      pageController.animateToPage(currentIndex,
-          duration: Duration(milliseconds: 250), curve: Curves.bounceInOut);
-    });
-  }
-
+class CustomBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -527,12 +514,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  CustomNavItem(setPage: setPage, icon: Icons.home, id: 0),
+                  CustomNavItem(icon: Icons.home, id: 0),
                   Container(),
-                  CustomNavItem(
-                      setPage: setPage, icon: Icons.person_pin_rounded, id: 1),
+                  CustomNavItem(icon: Icons.person_pin_rounded, id: 1),
                   Container(),
-                  CustomNavItem(setPage: setPage, icon: Icons.settings, id: 2),
+                  CustomNavItem(icon: Icons.settings, id: 2),
                 ],
               ),
             ),
@@ -575,35 +561,37 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 class CustomNavItem extends StatelessWidget {
   final IconData icon;
   final int id;
-  final Function setPage;
 
-  const CustomNavItem(
-      {required this.setPage, required this.icon, required this.id});
+  const CustomNavItem({required this.icon, required this.id});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        currentIndex = id;
-        setPage();
-      },
-      child: CircleAvatar(
-        radius: 30,
-        backgroundColor: Theme.of(context).primaryColor,
-        child: CircleAvatar(
-          radius: 25,
-          backgroundColor: currentIndex == id
-              ? Colors.white.withOpacity(0.9)
-              : Colors.transparent,
-          child: Icon(
-            icon,
-            color: currentIndex == id
-                ? Colors.black
-                : Colors.white.withOpacity(0.9),
-          ),
-        ),
-      ),
-    );
+    return StoreConnector<AppState, AppStateViewModel>(
+        converter: (Store<AppState> store) => AppStateViewModel.create(store),
+        builder: (BuildContext context, vm) {
+          return GestureDetector(
+            onTap: () async {
+              await vm.dispatch(
+                  action: ChangePageMiddlewareAction.create(newPage: id));
+            },
+            child: CircleAvatar(
+              radius: 30,
+              backgroundColor: Theme.of(context).primaryColor,
+              child: CircleAvatar(
+                radius: 25,
+                backgroundColor: vm.page == id
+                    ? Colors.white.withOpacity(0.9)
+                    : Colors.transparent,
+                child: Icon(
+                  icon,
+                  color: vm.page == id
+                      ? Colors.black
+                      : Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
 

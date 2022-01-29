@@ -1,4 +1,5 @@
 import 'package:app_chat/store/actions/auth_action.dart';
+import 'package:app_chat/store/actions/change_page_action.dart';
 import 'package:app_chat/store/actions/change_theme_action.dart';
 import 'package:app_chat/store/actions/list_friend_action.dart';
 import 'package:app_chat/store/actions/update_user_info.dart';
@@ -15,6 +16,7 @@ final Reducer<AppState> appStateReducer = combineReducers<AppState>([
   TypedReducer<AppState, UpdateUserInfoReducerAction>(updateUserInfo),
   TypedReducer<AppState, ChangeThemeReducerAction>(changeTheme),
   TypedReducer<AppState, ListFriendReducerAction>(getListFriend),
+  TypedReducer<AppState, ChangePageReducerAction>(changePage),
 ]);
 
 AppState reducerChangeStatus(AppState state, StatusReducerAction action) {
@@ -40,4 +42,8 @@ AppState changeTheme(AppState state, ChangeThemeReducerAction action) {
 
 AppState getListFriend(AppState state, ListFriendReducerAction action) {
   return state.rebuild((p0) => p0..friend = ListBuilder(action.listFriend));
+}
+
+AppState changePage(AppState state, ChangePageReducerAction action) {
+  return state.rebuild((p0) => p0..page = action.goToPage);
 }
