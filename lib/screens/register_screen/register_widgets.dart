@@ -15,6 +15,7 @@ class BackButtonAppBar extends StatelessWidget {
     return IconButton(
       icon: Icon(
         CupertinoIcons.back,
+        color: Theme.of(context).primaryColor,
       ),
       onPressed: () {
         _navigatorKey.currentState!.pop();

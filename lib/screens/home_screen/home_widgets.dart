@@ -534,7 +534,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Container(),
+                  Container(width: 10,),
                   Text(
                     'Friends',
                     style: TextStyle(

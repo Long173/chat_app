@@ -1,4 +1,5 @@
 import 'package:app_chat/config/build_app.dart';
+import 'package:app_chat/config/validation.dart';
 import 'package:app_chat/repo/repository.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/actions/change_page_action.dart';
@@ -30,6 +31,8 @@ class AppMiddleware implements EpicClass<AppState> {
   final Repository repository;
 
   AppMiddleware(this.repository);
+
+  final validation = Validation();
 
   @override
   Stream call(Stream actions, EpicStore<AppState> store) {
@@ -147,6 +150,9 @@ class AppMiddleware implements EpicClass<AppState> {
         progressDialog.show();
         try {
           yield StatusReducerAction.create(status: "isLoading");
+          validation.fillCheck([action.email, action.password]);
+          validation.emailValidation(action.email);
+          validation.passwordValidation(action.password);
           UserCredential user = await auth.signInWithEmailAndPassword(
               email: action.email, password: action.password);
           if (user.user != null) {
@@ -198,6 +204,11 @@ class AppMiddleware implements EpicClass<AppState> {
         progressDialog.show();
         try {
           yield StatusReducerAction.create(status: "isLoading");
+          validation
+                              .fillCheck([action.name, action.email, action.password, action.confirm]);
+                          validation.emailValidation(action.email);
+                          validation.passwordValidation(action.password);
+                          validation.matchPassword(action.password, action.confirm);
           UserCredential user = await auth.createUserWithEmailAndPassword(
               email: action.email, password: action.password);
           if (user.user != null) {

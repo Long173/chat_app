@@ -11,6 +11,7 @@ abstract class RegisterMiddlewareAction
         AbstractRegister {
   String get email;
   String get password;
+  String get confirm;
   String get name;
   String get image;
   RegisterMiddlewareAction._();
@@ -19,11 +20,14 @@ abstract class RegisterMiddlewareAction
     required String email,
     required String password,
     required String name,
+    required String confirm,
     String image = 'assets/person.png'
   }) =>
       RegisterMiddlewareAction((update) => update
         ..email = email
-        ..password = password);
+        ..password = password
+        ..name = name
+        ..confirm = confirm);
 
   factory RegisterMiddlewareAction(
           [void Function(RegisterMiddlewareActionBuilder) updates]) =
