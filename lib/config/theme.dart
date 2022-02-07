@@ -12,5 +12,6 @@ class MyThemes {
     scaffoldBackgroundColor: kBackgroundColorLight,
     colorScheme: ColorScheme.light(),
     primaryColorLight: Color(0xFFFEF9EB),
+    primaryColorDark: Colors.white,
   );
 }

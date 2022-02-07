@@ -204,11 +204,11 @@ class AppMiddleware implements EpicClass<AppState> {
         progressDialog.show();
         try {
           yield StatusReducerAction.create(status: "isLoading");
-          validation
-                              .fillCheck([action.name, action.email, action.password, action.confirm]);
-                          validation.emailValidation(action.email);
-                          validation.passwordValidation(action.password);
-                          validation.matchPassword(action.password, action.confirm);
+          validation.fillCheck(
+              [action.name, action.email, action.password, action.confirm]);
+          validation.emailValidation(action.email);
+          validation.passwordValidation(action.password);
+          validation.matchPassword(action.password, action.confirm);
           UserCredential user = await auth.createUserWithEmailAndPassword(
               email: action.email, password: action.password);
           if (user.user != null) {

@@ -21,23 +21,11 @@ abstract class AbstractRepository {
   Future uploadUserAva(image, AppUser user);
   Future sendMess(String message, String sender, String receiver, String type,
       Timestamp timeSend, bool seen);
-  queryData(String queryString, User user);
 }
 
 class Repository implements AbstractRepository {
   FirebaseFirestore firebase = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-
-
-
-  @override
-  queryData(String queryString, User user) async {
-    return firebase
-        .collection('users')
-        .where('email',
-            isGreaterThanOrEqualTo: queryString, isNotEqualTo: user.email)
-        .get();
-  }
 
   @override
   Future<AppUser> infoUser(User user) async {

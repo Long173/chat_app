@@ -54,7 +54,7 @@ class _FriendPageState extends State<FriendPage> {
                   Expanded(
                       child: FirestoreSearchResults.builder(
                           resultsBodyBackgroundColor:
-                              Theme.of(context).primaryColorLight,
+                              Theme.of(context).primaryColorDark,
                           tag: 'search friend',
                           firestoreCollectionName: 'users',
                           searchBy: 'email',
@@ -78,7 +78,10 @@ class _FriendPageState extends State<FriendPage> {
                               final List<DataModel> dataList = snapshot.data;
                               if (dataList.isEmpty) {
                                 return const Center(
-                                  child: Text('No Results Returned', style: TextStyle(fontSize: 20),),
+                                  child: Text(
+                                    'No Results Returned',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
                                 );
                               }
                               return ListView.builder(
@@ -97,7 +100,6 @@ class _FriendPageState extends State<FriendPage> {
                                           ),
                                         ),
                                         child: ListTile(
-                                        
                                           leading: ClipOval(
                                             child: CachedNetworkImage(
                                               imageUrl: dataList[index].image!,
