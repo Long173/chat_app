@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ConfirmNotiWidget extends StatelessWidget {
   const ConfirmNotiWidget({
@@ -405,37 +406,41 @@ class NewCardSkelton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var widthDevice = MediaQuery.of(context).size.width;
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          StoreConnector<AppState, AppStateViewModel>(
-              converter: (Store<AppState> store) =>
-                  AppStateViewModel.create(store),
-              builder: (BuildContext context, vm) {
-                return CircleAvatar(
-                  radius: 30,
-                  backgroundColor: vm.isDark
-                      ? Colors.white.withOpacity(0.04)
-                      : Colors.black.withOpacity(0.04),
-                );
-              }),
-          Column(
-            children: [
-              Skelton(
-                width: widthDevice * 0.7,
-                height: 15,
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Skelton(
-                width: widthDevice * 0.7,
-                height: 15,
-              ),
-            ],
-          ),
-        ],
+    return Shimmer.fromColors(
+      baseColor: Colors.grey,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          children: [
+            StoreConnector<AppState, AppStateViewModel>(
+                converter: (Store<AppState> store) =>
+                    AppStateViewModel.create(store),
+                builder: (BuildContext context, vm) {
+                  return CircleAvatar(
+                    radius: 30,
+                    backgroundColor: vm.isDark
+                        ? Colors.white.withOpacity(0.04)
+                        : Colors.black.withOpacity(0.04),
+                  );
+                }),
+            Column(
+              children: [
+                Skelton(
+                  width: widthDevice * 0.7,
+                  height: 15,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Skelton(
+                  width: widthDevice * 0.7,
+                  height: 15,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -534,7 +539,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Container(width: 10,),
+                  Container(
+                    width: 10,
+                  ),
                   Text(
                     'Friends',
                     style: TextStyle(
