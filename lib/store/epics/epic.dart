@@ -15,7 +15,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:redux_epics/redux_epics.dart';
@@ -69,12 +68,17 @@ class AppMiddleware implements EpicClass<AppState> {
       Stream<dynamic> actions, EpicStore<AppState> store) async* {
     await for (final action in actions) {
       if (action is SendMessageMiddlewareAction) {
+        var context = _navigatorKey.currentState!.overlay!.context;
         try {
           yield StatusReducerAction.create(status: "isLoading");
           yield repository.sendMess(action.message, action.sender,
               action.receiver, action.type, action.timeSend, action.seen);
         } catch (e) {
-          Fluttertoast.showToast(msg: e.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
         } finally {
           yield StatusReducerAction.create(status: "idle");
         }
@@ -86,12 +90,17 @@ class AppMiddleware implements EpicClass<AppState> {
       Stream<dynamic> actions, EpicStore<AppState> store) async* {
     await for (final action in actions) {
       if (action is ListFriendMiddlewareAction) {
+        var context = _navigatorKey.currentState!.overlay!.context;
         try {
           yield StatusReducerAction.create(status: "isLoading");
           final list = await repository.getListFriend(action.user);
           yield ListFriendReducerAction.create(listFriend: list);
         } catch (e) {
-          Fluttertoast.showToast(msg: e.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
         } finally {
           yield StatusReducerAction.create(status: "idle");
         }
@@ -103,11 +112,17 @@ class AppMiddleware implements EpicClass<AppState> {
       Stream<dynamic> actions, EpicStore<AppState> store) async* {
     await for (final action in actions) {
       if (action is UpdateUserInfoMiddlewareAction) {
+        var context = _navigatorKey.currentState!.overlay!.context;
+
         try {
           yield StatusReducerAction.create(status: "isLoading");
           yield UpdateUserInfoReducerAction.create(newImage: action.image);
         } catch (e) {
-          Fluttertoast.showToast(msg: e.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
         } finally {
           yield StatusReducerAction.create(status: "idle");
         }
@@ -119,13 +134,19 @@ class AppMiddleware implements EpicClass<AppState> {
       Stream<dynamic> actions, EpicStore<AppState> store) async* {
     await for (final action in actions) {
       if (action is ChangePageMiddlewareAction) {
+        var context = _navigatorKey.currentState!.overlay!.context;
+
         try {
           yield StatusReducerAction.create(status: "isLoading");
           yield ChangePageReducerAction.create(newPage: action.goToPage);
           pageController.animateToPage(action.goToPage,
               duration: Duration(milliseconds: 250), curve: Curves.bounceInOut);
         } catch (e) {
-          Fluttertoast.showToast(msg: e.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
         } finally {
           yield StatusReducerAction.create(status: "idle");
         }
@@ -143,16 +164,15 @@ class AppMiddleware implements EpicClass<AppState> {
         yield LoginReducerAction.create(newUser: appUser);
       }
       if (action is LoginMiddlewareAction) {
-        ProgressDialog progressDialog = ProgressDialog(
-            _navigatorKey.currentState!.overlay!.context,
-            message: Text('Please wait'),
-            title: Text('Logging In'));
+        var context = _navigatorKey.currentState!.overlay!.context;
+        ProgressDialog progressDialog = ProgressDialog(context,
+            message: Text('Please wait'), title: Text('Logging In'));
         progressDialog.show();
         try {
           yield StatusReducerAction.create(status: "isLoading");
-          validation.fillCheck([action.email, action.password]);
-          validation.emailValidation(action.email);
-          validation.passwordValidation(action.password);
+          validation.fillCheck([action.email, action.password], context);
+          validation.emailValidation(action.email, context);
+          validation.passwordValidation(action.password, context);
           UserCredential user = await auth.signInWithEmailAndPassword(
               email: action.email, password: action.password);
           if (user.user != null) {
@@ -164,18 +184,32 @@ class AppMiddleware implements EpicClass<AppState> {
         } on FirebaseAuthException catch (e) {
           progressDialog.dismiss();
           if (e.code == 'user-not-found') {
-            Fluttertoast.showToast(msg: 'User not found');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('User not found'),
+              ),
+            );
           } else if (e.code == 'wrong-password') {
-            Fluttertoast.showToast(msg: 'Wrong password');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Wrong password'),
+              ),
+            );
           }
         } catch (e) {
           progressDialog.dismiss();
-          Fluttertoast.showToast(msg: e.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
         } finally {
           yield StatusReducerAction.create(status: "idle");
         }
       }
       if (action is LogoutMiddlewareAction) {
+        var context = _navigatorKey.currentState!.overlay!.context;
+
         try {
           yield StatusReducerAction.create(status: "isLoading");
           FirebaseAuth.instance.signOut();
@@ -183,7 +217,11 @@ class AppMiddleware implements EpicClass<AppState> {
           _navigatorKey.currentState!
               .pushNamedAndRemoveUntil(Routes.login, (route) => false);
         } catch (e) {
-          Fluttertoast.showToast(msg: e.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
         } finally {
           yield StatusReducerAction.create(status: "idle");
         }
@@ -197,18 +235,18 @@ class AppMiddleware implements EpicClass<AppState> {
   ) async* {
     await for (final action in actions) {
       if (action is RegisterMiddlewareAction) {
-        ProgressDialog progressDialog = ProgressDialog(
-            _navigatorKey.currentState!.overlay!.context,
-            message: Text('Please wait'),
-            title: Text('Signing up'));
+        var context = _navigatorKey.currentState!.overlay!.context;
+        ProgressDialog progressDialog = ProgressDialog(context,
+            message: Text('Please wait'), title: Text('Signing up'));
         progressDialog.show();
         try {
           yield StatusReducerAction.create(status: "isLoading");
           validation.fillCheck(
-              [action.name, action.email, action.password, action.confirm]);
-          validation.emailValidation(action.email);
-          validation.passwordValidation(action.password);
-          validation.matchPassword(action.password, action.confirm);
+              [action.name, action.email, action.password, action.confirm],
+              context);
+          validation.emailValidation(action.email, context);
+          validation.passwordValidation(action.password, context);
+          validation.matchPassword(action.password, action.confirm, context);
           UserCredential user = await auth.createUserWithEmailAndPassword(
               email: action.email, password: action.password);
           if (user.user != null) {
@@ -219,24 +257,41 @@ class AppMiddleware implements EpicClass<AppState> {
               'image':
                   'https://firebasestorage.googleapis.com/v0/b/app-chat-c5b54.appspot.com/o/profileImage%2Fperson.png?alt=media&token=9eb5df06-22c4-4c02-a8fb-39cb1ed08e33',
             });
-            await firebase.collection('messages').doc(user.user!.email).set({
-              'text': [],
-            }, SetOptions(merge: true));
           }
           _navigatorKey.currentState!.pop();
-          Fluttertoast.showToast(msg: 'Sign Up Success');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sign Up Success'),
+            ),
+          );
         } on FirebaseAuthException catch (e) {
           progressDialog.dismiss();
           if (e.code == 'email-already-in-use') {
-            Fluttertoast.showToast(msg: 'Email is already in use');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Email is already in use'),
+              ),
+            );
           } else if (e.code == 'weak-password') {
-            Fluttertoast.showToast(msg: 'Password is weak');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Password is weak'),
+              ),
+            );
           } else {
-            Fluttertoast.showToast(msg: 'Something went wrong');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Something went wrong'),
+              ),
+            );
           }
         } catch (e) {
           progressDialog.dismiss();
-          Fluttertoast.showToast(msg: 'Something went wrong');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Something went wrong'),
+            ),
+          );
         } finally {
           yield StatusReducerAction.create(status: "idle");
         }
@@ -250,11 +305,16 @@ class AppMiddleware implements EpicClass<AppState> {
   ) async* {
     await for (final action in actions) {
       if (action is ChangeThemeMiddlewareAction) {
+        var context = _navigatorKey.currentState!.overlay!.context;
         try {
           yield StatusReducerAction.create(status: "isLoading");
           yield ChangeThemeReducerAction.create(isDark: action.isDark);
         } catch (e) {
-          Fluttertoast.showToast(msg: 'Something went wrong');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Something went wrong'),
+            ),
+          );
         } finally {
           yield StatusReducerAction.create(status: "idle");
         }

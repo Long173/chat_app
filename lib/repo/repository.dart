@@ -7,7 +7,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -18,7 +18,7 @@ abstract class AbstractRepository {
   Future getAvatar(String name);
   Future<File?> getImage();
   Future uploadChatImage(var image);
-  Future uploadUserAva(image, AppUser user);
+  Future uploadUserAva(image, AppUser user, BuildContext context);
   Future sendMess(String message, String sender, String receiver, String type,
       Timestamp timeSend, bool seen);
 }
@@ -132,13 +132,17 @@ class Repository implements AbstractRepository {
   }
 
   @override
-  Future uploadUserAva(image, AppUser user) async {
+  Future uploadUserAva(image, AppUser user, BuildContext context) async {
     Reference firebaseRef =
         FirebaseStorage.instance.ref('profileImage').child(user.email);
     await firebaseRef.putFile(image!);
     var url = await firebaseRef.getDownloadURL();
     await firebase.collection('users').doc(user.email).update({'image': url});
-    Fluttertoast.showToast(msg: 'Profile picture uploaded');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Profile picture uploaded'),
+      ),
+    );
     return url;
   }
 

@@ -15,8 +15,6 @@ class _$RegisterMiddlewareAction extends RegisterMiddlewareAction {
   final String confirm;
   @override
   final String name;
-  @override
-  final String image;
 
   factory _$RegisterMiddlewareAction(
           [void Function(RegisterMiddlewareActionBuilder)? updates]) =>
@@ -26,8 +24,7 @@ class _$RegisterMiddlewareAction extends RegisterMiddlewareAction {
       {required this.email,
       required this.password,
       required this.confirm,
-      required this.name,
-      required this.image})
+      required this.name})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         email, 'RegisterMiddlewareAction', 'email');
@@ -37,8 +34,6 @@ class _$RegisterMiddlewareAction extends RegisterMiddlewareAction {
         confirm, 'RegisterMiddlewareAction', 'confirm');
     BuiltValueNullFieldError.checkNotNull(
         name, 'RegisterMiddlewareAction', 'name');
-    BuiltValueNullFieldError.checkNotNull(
-        image, 'RegisterMiddlewareAction', 'image');
   }
 
   @override
@@ -57,18 +52,14 @@ class _$RegisterMiddlewareAction extends RegisterMiddlewareAction {
         email == other.email &&
         password == other.password &&
         confirm == other.confirm &&
-        name == other.name &&
-        image == other.image;
+        name == other.name;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc(
-            $jc($jc($jc(0, email.hashCode), password.hashCode),
-                confirm.hashCode),
-            name.hashCode),
-        image.hashCode));
+        $jc($jc($jc(0, email.hashCode), password.hashCode), confirm.hashCode),
+        name.hashCode));
   }
 
   @override
@@ -77,8 +68,7 @@ class _$RegisterMiddlewareAction extends RegisterMiddlewareAction {
           ..add('email', email)
           ..add('password', password)
           ..add('confirm', confirm)
-          ..add('name', name)
-          ..add('image', image))
+          ..add('name', name))
         .toString();
   }
 }
@@ -104,10 +94,6 @@ class RegisterMiddlewareActionBuilder
   String? get name => _$this._name;
   set name(String? name) => _$this._name = name;
 
-  String? _image;
-  String? get image => _$this._image;
-  set image(String? image) => _$this._image = image;
-
   RegisterMiddlewareActionBuilder();
 
   RegisterMiddlewareActionBuilder get _$this {
@@ -117,7 +103,6 @@ class RegisterMiddlewareActionBuilder
       _password = $v.password;
       _confirm = $v.confirm;
       _name = $v.name;
-      _image = $v.image;
       _$v = null;
     }
     return this;
@@ -145,9 +130,7 @@ class RegisterMiddlewareActionBuilder
             confirm: BuiltValueNullFieldError.checkNotNull(
                 confirm, 'RegisterMiddlewareAction', 'confirm'),
             name: BuiltValueNullFieldError.checkNotNull(
-                name, 'RegisterMiddlewareAction', 'name'),
-            image: BuiltValueNullFieldError.checkNotNull(
-                image, 'RegisterMiddlewareAction', 'image'));
+                name, 'RegisterMiddlewareAction', 'name'));
     replace(_$result);
     return _$result;
   }

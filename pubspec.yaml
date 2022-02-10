@@ -22,7 +22,6 @@ dependencies:
   firebase_auth:
   firebase_storage:
   cloud_firestore:
-  fluttertoast:
   ndialog:
   built_collection: ^5.1.1
   flutter_launcher_icons: ^0.9.2

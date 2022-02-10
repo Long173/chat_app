@@ -13,7 +13,6 @@ abstract class RegisterMiddlewareAction
   String get password;
   String get confirm;
   String get name;
-  String get image;
   RegisterMiddlewareAction._();
 
   factory RegisterMiddlewareAction.create({
@@ -21,7 +20,6 @@ abstract class RegisterMiddlewareAction
     required String password,
     required String name,
     required String confirm,
-    String image = 'assets/person.png'
   }) =>
       RegisterMiddlewareAction((update) => update
         ..email = email

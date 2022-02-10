@@ -114,7 +114,7 @@ class _UserScreenState extends State<UserScreen> {
                         return TextButton(
                           onPressed: () async {
                             var url =
-                                await repository.uploadUserAva(_image, user);
+                                await repository.uploadUserAva(_image, user, context);
                             vm.dispatch(
                                 action: UpdateUserInfoMiddlewareAction.create(
                                     image: url));
