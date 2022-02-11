@@ -1,6 +1,7 @@
 import 'package:app_chat/screens/chat_screen/chat_screen.dart';
 import 'package:app_chat/store/actions/auth_action.dart';
 import 'package:app_chat/store/actions/change_page_action.dart';
+import 'package:app_chat/store/actions/recent_mess_action.dart';
 import 'package:app_chat/store/models/app_state.dart';
 import 'package:app_chat/store/models/message.dart';
 import 'package:app_chat/store/view_model/app_state_view_model.dart';
@@ -340,6 +341,15 @@ class RecentChats extends StatelessWidget {
                     itemCount: lenghtChat,
                     controller: recentController,
                     itemBuilder: (context, index) {
+                      recentController.addListener(() {
+                        if (recentController.position.pixels ==
+                            recentController.position.minScrollExtent) {
+                          print('min');
+                          vm.dispatch(
+                              action: RencentChatMiddlewareAction.create(
+                                  newUser: user));
+                        }
+                      });
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 20),

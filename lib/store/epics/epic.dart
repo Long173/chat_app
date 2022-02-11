@@ -264,6 +264,7 @@ class AppMiddleware implements EpicClass<AppState> {
               content: Text('Sign Up Success'),
             ),
           );
+          Navigator.pop(context);
         } on FirebaseAuthException catch (e) {
           progressDialog.dismiss();
           if (e.code == 'email-already-in-use') {
