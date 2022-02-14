@@ -38,13 +38,11 @@ In the firebase console select `Firestore Database` under `Build` and create a C
 - Select the database you’ve just created.
 - Create `collection` and name it `users`.
 
-![image](https://user-images.githubusercontent.com/95491504/152294308-6277de8f-67d5-428a-abe7-d0647ecb55a0.png)
 
 #### Create messages collection
 - Select the database you’ve just created.
 - Create `collection` and name it `messages`.
 
-![image](https://user-images.githubusercontent.com/95491504/152294363-2bf3fabd-7019-41cb-9d3c-7eab70407574.png)
 
 # Architecture
 ## MVVM (Model–view–viewmodel)
